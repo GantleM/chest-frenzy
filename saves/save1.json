@@ -1,0 +1,24 @@
+{
+    "total_chest_opened": 10,
+    "multipliers": [
+        3,
+        1,
+        1
+    ],
+    "inventory": [
+        0,
+        0,
+        0,
+        4
+    ],
+    "prestige": 6,
+    "money": 838,
+    "upgrades": {
+        "max_buy_limit_level": 1,
+        "max_buy_limit_cap_increase": 0,
+        "max_par_rolls": 1,
+        "upgrade_discount": 0,
+        "multiplier_discount": 0,
+        "extra_AT": 7
+    }
+}
