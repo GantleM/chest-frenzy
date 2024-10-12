@@ -1,24 +1,24 @@
 {
-    "total_chest_opened": 10,
+    "total_chest_opened": 6343860,
     "multipliers": [
-        3,
+        1,
         1,
         1
     ],
     "inventory": [
-        0,
-        0,
-        0,
-        4
+        1000000000000,
+        9993656140,
+        10000,
+        8300
     ],
-    "prestige": 6,
-    "money": 838,
+    "prestige": 100,
+    "money": 5006618478450,
     "upgrades": {
-        "max_buy_limit_level": 1,
+        "max_buy_limit_level": 5,
         "max_buy_limit_cap_increase": 0,
-        "max_par_rolls": 1,
-        "upgrade_discount": 0,
-        "multiplier_discount": 0,
-        "extra_AT": 7
+        "max_par_rolls": 5,
+        "upgrade_discount": 50,
+        "multiplier_discount": 50,
+        "extra_AT": 10
     }
 }

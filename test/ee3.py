@@ -1,6 +1,8 @@
 import numpy as np
+from collections import Counter
 
-def roll(chest, options, chances, amount):
+
+def roll(chest, options, chances, amount, money):
 
     #TODO: If amount > 1m or 10m: Roll 100k random, then multiply results instead of actully that much??
 
@@ -9,7 +11,6 @@ def roll(chest, options, chances, amount):
         0, # 0-Legendary key
         0, # 1-Mythic key
         0, # 2-Godlike key
-        0, # 3- Ascention token key
           # -3 LOG TO ADD - Will be a tuple here
         [0], # -2-money to void 
         0] # -1-Money to add
@@ -19,38 +20,32 @@ def roll(chest, options, chances, amount):
     chest_rewards = np.array([i for i in range(len(options))])
 
     #* If more than 1M rolls, then simulate. Otherwise, do actual rolls.
-    max_Real_ROLLS = 1_000_000
+    if(amount > 1_000_000):
+        results = np.random.choice(chest_rewards, size=1_000_000, p=chances)
 
-    if(amount > max_Real_ROLLS):
+        # Count occurrences of each reward in the smaller sample
+        result_counts = Counter(results)
 
-        if (amount > 100_000_000_000):
-            chunk_size = 10**8  # 100 million trials at a time
-        else:
-            chunk_size = 10**7 # 10 million trials at a time
-        num_chunks = amount // chunk_size
+        # Scale factor for estimating results, rounded to 2 decimal places
+        scale_factor = round(amount / 1_000_000, 2)
 
-
+        # Create a dictionary to store the final estimates
         estimated_counts = {}
+
         # Loop through each reward and calculate estimated counts
         for reward, probability in zip(chest_rewards, chances):
+            # Calculate expected count based on probability over 1 billion rolls
+            expected_count_full = probability * amount
+            
+            if reward in result_counts:
+                # If the reward appeared in the small sample, use the Poisson distribution
+                actual_count = result_counts[reward] * scale_factor
+                reward_count[reward] = np.random.poisson(lam=actual_count)
+            else:
+                
+                # If the reward didn't appear, use its expected count directly with Poisson
+                reward_count[reward] = np.random.poisson(lam=expected_count_full)
 
-    
-            # Get a list of results/chunk
-            result_chunks = np.random.binomial(n=chunk_size, p=probability, size=num_chunks)
-
-            # ! MAKE SURE INT64 TO AVOID OVERFLOW!!
-            total_sum = np.sum(result_chunks, dtype=np.int64)
-
-            estimated_counts[reward] = total_sum
-
-            leftover_trials = amount % chunk_size
-
-            # If more needed, then add those too
-            if leftover_trials > 0:
-                estimated_counts[reward] += np.random.binomial(n=leftover_trials, p=probability)
-
-        # Put it into correct format
-        reward_count = dict(zip(options, estimated_counts.values()))
 
     else:
         # Do rolls
@@ -62,17 +57,14 @@ def roll(chest, options, chances, amount):
         # Convert back to labels if needed (only for final output)
         reward_count = dict(zip(options, counts))
 
-    print(reward_count)
-    # print(type(roll_results))
-    # print(type(reward_count))
-    
+
     if (chest == "STARTER"):
         
-        roll_results[-1] += int(reward_count.get("Common",0)) * 10
-        roll_results[-1] += int(reward_count.get("Uncommon",0)) * 10
-        roll_results[-1] += int(reward_count.get("Rare",0)) * 15
-        roll_results[-1] += int(reward_count.get("Epic",0)) * 25
-        roll_results[-1] += int(reward_count.get("Legendary",0)) * 50
+        roll_results[-1] += reward_count.get("Common",0) * 10
+        roll_results[-1] += reward_count.get("Uncommon",0) * 10
+        roll_results[-1] += reward_count.get("Rare",0) * 15
+        roll_results[-1] += reward_count.get("Epic",0) * 25
+        roll_results[-1] += reward_count.get("Legendary",0) * 50
         
         # Set amount of keys earned.
         roll_results[0] += reward_count.get("Legendary",0)
@@ -84,10 +76,10 @@ def roll(chest, options, chances, amount):
     if (chest == "LEGENDARY"):
 
         # ["Common", "Rare", "Epic", "Mythic", "Void", "Secret"]
-        roll_results[-1] += int(reward_count.get("Common",0)) * 10
-        roll_results[-1] += int(reward_count.get("Rare",0))* 15
-        roll_results[-1] += int(reward_count.get("Epic",0)) * 25
-        roll_results[-1] += int(reward_count.get("Secret",0)) * 1_000_000
+        roll_results[-1] += reward_count.get("Common",0) * 10
+        roll_results[-1] += reward_count.get("Rare",0) * 15
+        roll_results[-1] += reward_count.get("Epic",0) * 25
+        roll_results[-1] += reward_count.get("Secret",0) * 1_000_000
         
         
         # adds how many times you got "void" -> 0.5x your money
@@ -105,10 +97,10 @@ def roll(chest, options, chances, amount):
     if (chest == "MYTHIC"):
 
         # ["Common", "Rare", "Epic", "Godlike", "Secret"]
-        roll_results[-1] += int(reward_count.get("Common",0)) * 1000
-        roll_results[-1] += int(reward_count.get("Rare",0)) * 1500
-        roll_results[-1] += int(reward_count.get("Epic",0)) * 3000
-        roll_results[-1] += int(reward_count.get("Secret",0)) * 1_000_000_000_000
+        roll_results[-1] += reward_count.get("Common",0) * 1000
+        roll_results[-1] += reward_count.get("Rare",0) * 1500
+        roll_results[-1] += reward_count.get("Epic",0) * 3000
+        roll_results[-1] += reward_count.get("Secret",0) * 1_000_000_000_000
         
 
         # If you get godlike, it changes message colour. 
@@ -122,3 +114,6 @@ def roll(chest, options, chances, amount):
     # Add log text to position -3.
     roll_results.insert(-2,log_to_add[0])
     return roll_results
+
+
+

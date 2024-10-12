@@ -10,6 +10,7 @@ from assets import image_data as imgD
 from assets import number_formatter as nf
 from assets import chest_roll as roll
 from assets import save_data as save_game
+from assets import popup_windows as popups
 
 
 
@@ -18,7 +19,7 @@ def do_autosave():
 
 
 # * IMORTANT VARIABLES
-version = 2.9
+version = 3.8
 currently_opening = 0
 
 
@@ -39,33 +40,7 @@ if(os.path.isfile("saves/save1.json")):
 
 else:
 
-    # Show tutorial
-    info = f'''
-        Welcome to Chest Frenzy! V{version}
-        -------------------------------
-        This is a "cookie clicker" type game, but with chests!
-
-        Your main objectives are to:
-        1) earn money
-        2) open chests 
-        3) upgrade luck multipliers
-        4) buy unlocks 
-        5) prestige! 
-        6) repeat!!!!
-
-        ------
-        You can always manually save by clicking "Save" found in settings. 
-        - If you exit mid-roll, you won't get the rewards from said roll 
-
-        The tabs on the right "I, II, III" etc are Prestige tabs.
-        Certain prestiges you unlock have a reward tab, drastically changing the game!
-
-        The parallel open ugprade allows multiple batches of chests to be opened simultaneously. 
-
-        '''
-
-    sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
-
+    popups.tutorial(version)
 
     # * Player data setup
     total_chest_opened = 0
@@ -112,10 +87,31 @@ def multiplier_price(rarity):
 # multiplier_price_mythic         = lambda: 55**multipliers[1]
 # multiplier_price_godlike        = lambda: 200**multipliers[2]
 
-upgrade_price_buylimit          = lambda: 1000*(10**upgrades["max_buy_limit_level"])
+def upgrade_price(name):
+    match name:
+        case "max_buy_limit":
+            
+            # After 10B buy limit, we increase price eg.: instead of 1qu -> 10qu
+            if (upgrades["max_buy_limit_level"] > 11):
+                price_num = 10000
+            else:
+                price_num = 1000
+
+            base_price = price_num*(10**upgrades["max_buy_limit_level"])
+
+        case "max_par_rolls":
+            base_price = 100**upgrades["max_par_rolls"]
+        
+    discount_percent = upgrades["upgrade_discount"] / 100
+    discount = round(base_price * discount_percent)
+
+    return base_price-discount
+
+ 
+#upgrade_price_buylimit          = lambda: 1000*(10**upgrades["max_buy_limit_level"])
 upgrade_value_buylimit          = lambda: 10**upgrades["max_buy_limit_level"]
 
-upgrade_price_par_roll          = lambda: 100**upgrades["max_par_rolls"]
+#upgrade_price_par_roll          = lambda: 100**upgrades["max_par_rolls"]
 
 
 
@@ -159,9 +155,9 @@ inventory_col = [
        sg.Text(f"{nf.sizeof_number(inventory[2])}", justification="right", key="-GODLIKE KEY-")
     ],
     [
-       sg.Image(data=imgD.ascension_toke_img, subsample=20, visible=prestige>0, key="-ASCENTION TOKEN IMG-"),  
-       sg.Text("Ascension Token: ", size=(15, 1), visible=prestige>0, key="-ASCENTION TOKEN TEXT-"), 
-       sg.Text(f"{nf.sizeof_number(inventory[3])}", justification="right", visible=prestige>0 ,key="-ASCENTION TOKEN-")
+       sg.Image(data=imgD.ascension_toke_img, subsample=20, visible=prestige>0, key="-ASCENSION TOKEN IMG-"),  
+       sg.Text("Ascension Token: ", size=(15, 1), visible=prestige>0, key="-ASCENSION TOKEN TEXT-"), 
+       sg.Text(f"{nf.sizeof_number(inventory[3])}", justification="right", visible=prestige>0 ,key="-ASCENSION TOKEN-")
     ]
 ]
 
@@ -198,7 +194,7 @@ prestige_col = [
     [
         sg.Image(data=imgD.godlike_key_img, subsample=20),
         sg.Text("Godlike:", size=(13,1)),
-        sg.Text("1x", justification="right") 
+        sg.Text("1x", justification="right", key="-PRESTIGE KEY REQUIREMENT-") 
     ],
     [
         sg.Image(data=imgD.chest_img, subsample=20),
@@ -221,14 +217,14 @@ upgrades_col = [
         sg.Button("+", key="-MAX BUY LIMIT INC-"),
 
         # Value unset, updated when switched to tab.
-        sg.Text("$", size=(7,1), key="-MAX BUY LIMIT PRICE-", tooltip="0")
+        sg.Text("$", size=(9,1), key="-MAX BUY LIMIT PRICE-", tooltip="0")
     ],
     [
         sg.Text("Max parallel open:", size=(15, 1)), 
         sg.Text(f"{upgrades["max_par_rolls"]}", size=(6, 1), justification="right", key="-MAX PAR ROLLS VALUE-"), 
         sg.Button("+", key="-MAX PAR ROLLS INC-"),
 
-        sg.Text("$", size=(7,1) ,key="-MAX PAR ROLLS PRICE-", tooltip="0")
+        sg.Text("$", size=(9,1) ,key="-MAX PAR ROLLS PRICE-", tooltip="0")
     ]
 ]
 
@@ -296,7 +292,7 @@ prestige1_tab = [
     [
         sg.Text("Extra Token/Prestige: ", size=(16, 1)), 
         sg.Text(f"{upgrades["extra_AT"]}", size=(4, 1), justification="right", key="-EXTRA TOKEN VALUE-"), 
-        sg.Button("+", key="-EXTRA TOKEN INC-"),
+        sg.Button("+", tooltip="+1", key="-EXTRA TOKEN INC-"),
 
         sg.Text("10x", size=(3,1), pad=((16, 0), 6), key="-EXTRA TOKEN PRICE-"),
         sg.Image(data=imgD.ascension_toke_img, subsample=20, pad=(0, 0))
@@ -304,17 +300,17 @@ prestige1_tab = [
     [
         sg.Text("Multiplier discount: ", size=(16, 1)), 
         sg.Text(f"{upgrades["multiplier_discount"]}%", size=(4, 1), justification="right", key="-MULTIPLIER DISCOUNT VALUE-"), 
-        sg.Button("+", key="-MULTIPLIER DISCOUNT INC-"),
+        sg.Button("+", tooltip="+1%", key="-MULTIPLIER DISCOUNT INC-"),
 
-        sg.Text("10x", size=(3,1), pad=((15, 0), 6), key="-MULTIPLIER DISCOUNT PRICE-"),
+        sg.Text("5x", size=(3,1), pad=((15, 0), 6), key="-MULTIPLIER DISCOUNT PRICE-"),
         sg.Image(data=imgD.ascension_toke_img, subsample=20, pad=(0, 0))
     ],
     [
         sg.Text("Upgrade discount: ", size=(16, 1)), 
         sg.Text(f"{upgrades["upgrade_discount"]}%", size=(4, 1), justification="right", key="-UPGRADE DISCOUNT VALUE-"), 
-        sg.Button("+", key="-UPGRADE DISCOUNT INC-"),
+        sg.Button("+", tooltip="+1%", key="-UPGRADE DISCOUNT INC-"),
 
-        sg.Text("25x", size=(3,1), pad=((15, 0), 6), key="-UPGRADE DISCOUNT PRICE-"),
+        sg.Text("10x", size=(3,1), pad=((15, 0), 6), key="-UPGRADE DISCOUNT PRICE-"),
         sg.Image(data=imgD.ascension_toke_img, subsample=20, pad=(0, 0))
     ],
     # [
@@ -341,7 +337,7 @@ prestige3_tab = [
 
 prestige6_tab = [
     [
-        sg.Text("Ascention Token Chest")
+        sg.Text("ASCENSION Token Chest")
     ]
 ]
 
@@ -400,10 +396,10 @@ def update_inventory():
 
 
 
-    window["-ASCENTION TOKEN IMG-"].update(visible=prestige>0)
-    window["-ASCENTION TOKEN TEXT-"].update(visible=prestige>0)
-    window["-ASCENTION TOKEN-"].update(visible=prestige>0)
-    window["-ASCENTION TOKEN-"].update(nf.sizeof_number(inventory[3]))
+    window["-ASCENSION TOKEN IMG-"].update(visible=prestige>0)
+    window["-ASCENSION TOKEN TEXT-"].update(visible=prestige>0)
+    window["-ASCENSION TOKEN-"].update(visible=prestige>0)
+    window["-ASCENSION TOKEN-"].update(nf.sizeof_number(inventory[3]))
 
 
 def update_multipliers():
@@ -433,41 +429,56 @@ def update_upgrades():
     window["-MAX PAR ROLLS VALUE-"].update(f"{upgrades["max_par_rolls"]}")
 
 
-    # Default max buy is 1 B, but can be increased to 10 B with ascention token upgrades!
-    if (upgrades["max_buy_limit_level"] == 9 + upgrades["max_buy_limit_cap_increase"]):
+    # Default max buy is 1 B, but can be increased to 10 B with ASCENSION token upgrades!
+    if (upgrades["max_buy_limit_level"] >= 9 + upgrades["max_buy_limit_cap_increase"]):
         window["-MAX BUY LIMIT PRICE-"].update("MAX")
         window["-MAX BUY LIMIT PRICE-"].set_tooltip("MAX")
         update_button("-MAX BUY LIMIT INC-", False)
     else:
-        window["-MAX BUY LIMIT PRICE-"].update(f"{nf.sizeof_number(upgrade_price_buylimit(),"$")}")
-        window["-MAX BUY LIMIT PRICE-"].set_tooltip(f"${upgrade_price_buylimit()}")
+        window["-MAX BUY LIMIT PRICE-"].update(f"{nf.sizeof_number(upgrade_price("max_buy_limit"),"$")}")
+        window["-MAX BUY LIMIT PRICE-"].set_tooltip(f"${upgrade_price("max_buy_limit"):,}")
         update_button("-MAX BUY LIMIT INC-", True)
 
 
-    if (upgrades["max_par_rolls"] == 5):
+    if (upgrades["max_par_rolls"] >= 5):
 
         window["-MAX PAR ROLLS PRICE-"].update("MAX")
         window["-MAX PAR ROLLS PRICE-"].set_tooltip("MAX")
         update_button("-MAX PAR ROLLS INC-", False)
 
     else:
-        window["-MAX PAR ROLLS PRICE-"].update(f"{nf.sizeof_number(upgrade_price_par_roll(),"$")}")
-        window["-MAX PAR ROLLS PRICE-"].set_tooltip(f"${upgrade_price_par_roll()}")
+        window["-MAX PAR ROLLS PRICE-"].update(f"{nf.sizeof_number(upgrade_price("max_par_rolls"),"$")}")
+        window["-MAX PAR ROLLS PRICE-"].set_tooltip(f"${upgrade_price("max_par_rolls")}")
         update_button("-MAX PAR ROLLS INC-", True)
 
 def update_prestige():
 
-    # Each prestige +10% is needed to prestige 
-    prestige_difficulty = 100 + (5*prestige)
+    # Each prestige +5% is needed to prestige
+    # After prestige 10, it all increases to %15
+    # BIG JUMP -> previously 9x5% but jumps to 10x15% added!!
+    if (prestige < 10): 
+        prestige_difficulty = 100 + (5*prestige)
+    else:
+        prestige_difficulty = 100 + (15*prestige)
+
+    # Set up key requirements
+    if (prestige < 10):
+        key_requirement = 1*prestige
+    elif (prestige < 25):
+        key_requirement = 10*prestige
+    else:
+        key_requirement = 100*prestige
+
     current_open_goal = (1_000_000_000_000/100) * prestige_difficulty
 
     window["-TOTAL OPENED-"].update(f"{nf.sizeof_number(total_chest_opened)}/{nf.sizeof_number(current_open_goal)}")
     window["-PROGRESS BAR-"].update((total_chest_opened/current_open_goal)*100)
 
+    window["-PRESTIGE KEY REQUIREMENT-"].update(f"{nf.sizeof_number(key_requirement)}x")
 
     # If has godlike key AND met requirements
-    
-    met_Requirement = inventory[2] >= 1 and total_chest_opened >= current_open_goal
+
+    met_Requirement = inventory[2] >= key_requirement and total_chest_opened >= current_open_goal
     update_button("-PRESTIGE-", met_Requirement)
     
 
@@ -484,6 +495,8 @@ def update_prestige_tab(tab_name):
             window["-MULTIPLIER DISCOUNT VALUE-"].update(f"{upgrades["multiplier_discount"]}%")
             update_button("-MULTIPLIER DISCOUNT INC-", upgrades["multiplier_discount"] < 50)
 
+            window["-UPGRADE DISCOUNT VALUE-"].update(f"{upgrades["upgrade_discount"]}%")
+            update_button("-UPGRADE DISCOUNT INC-", upgrades["upgrade_discount"] < 50)
         
 
 def update_roll_counter(change_by = 0):
@@ -534,7 +547,7 @@ def roll_chest(chest, options, chances, amount):
     0       -1-Money to add
     
     '''   
-    roll_result = roll.roll(chest, options, chances, amount, money)  
+    roll_result = roll.roll(chest, options, chances, amount)  
 
     time.sleep(0.3)
     # Checks if legendary chest VOID was rolled, then applies it.
@@ -544,7 +557,9 @@ def roll_chest(chest, options, chances, amount):
             money = round(money)
 
     # Adds total money earned and the log message
-    money += roll_result[-1]
+    # * MONEY NEEDS TO BE IN PYTHON INT!!! roll_result = numpy int.
+    previous_money = money
+    money = previous_money + int(roll_result[-1])
     log_text.append(roll_result[-3])
 
     # Adds keys to inventory
@@ -601,7 +616,8 @@ right_column = [
 #TODO: Add load save.
 menu_def = [
     ["Settings", ["Save::-MANUAL SAVE-", "Load (coming soon)"]],
-    ["Performance", ["Coming soon...", "Coming soon...."] ]
+    ["Performance", ["Coming soon...", "Coming soon...."] ],
+    ["Help",["Basic::-BASIC HELP-", "Prestige info::-PRESTIGE HELP-"]]
 ]
 
  #bar_background_color=sg.theme_background_color()
@@ -617,7 +633,8 @@ layout = [
         sg.Column(right_column)
     ],
     [
-        sg.Multiline(size=(90,10), autoscroll=True ,key="-LOG-")
+        # * size=(w,h) w is set to 1, but expand_x is set to true, so only setting h in reality
+        sg.Multiline(size=(1,10), autoscroll=True, expand_x=True ,key="-LOG-")
     ]
 ]
 
@@ -639,6 +656,12 @@ while True:
     if event.find("-MANUAL SAVE-") != -1:
         do_autosave()
         sg.popup("Game saved!")
+    
+    if event.find("-BASIC HELP-") != -1:
+       popups.tutorial(version)
+    
+    if event.find("-PRESTIGE HELP-") != -1:
+       popups.prestige_help()
 
 
     # -- TAB UPDATES -- #
@@ -667,8 +690,7 @@ while True:
 
     # -- UPGRADE BUTTONS
     if event == "-MAX BUY LIMIT INC-":
-        price_of_upgrade = upgrade_price_buylimit()
-
+        price_of_upgrade = upgrade_price("max_buy_limit")
 
         if money >= price_of_upgrade:
             money -= price_of_upgrade
@@ -679,7 +701,7 @@ while True:
 
     
     if event == "-MAX PAR ROLLS INC-":
-        price_of_upgrade = upgrade_price_par_roll()
+        price_of_upgrade = upgrade_price("max_par_rolls")
 
         if money >= price_of_upgrade:
             money -= price_of_upgrade
@@ -708,7 +730,6 @@ while True:
     if event == "-MYTHIC INC-":
 
         price_of_upgrade = multiplier_price("mythic")
-
 
         if money >= price_of_upgrade:
             money -= price_of_upgrade
@@ -758,6 +779,21 @@ while True:
             update_inventory()
             do_autosave()
 
+    if event == "-UPGRADE DISCOUNT INC-":
+
+        price_str = window["-UPGRADE DISCOUNT PRICE-"].get()
+        price_of_upgrade = int(price_str[:-1])
+
+        if inventory[3] >= price_of_upgrade:
+            inventory[3] -= price_of_upgrade
+            upgrades["upgrade_discount"] += 1
+            
+            update_prestige_tab("I")
+            update_inventory()
+            do_autosave()
+
+
+    
     # -- CHEST BUTTONS
 
     if event == "-STARTER CHEST ROLL-":
@@ -864,46 +900,14 @@ while True:
     # - INFO
 
     if event == "-STARTER CHEST INFO-":
-        info = '''
-        Starter Chest: (No multipliers) 
-        -------------------------------
-        Common:\t\t\t40% = $10
-        Uncommon:\t\t\t30% = $10
-        Rare:\t\t\t20% = $15
-        Epic:\t\t\t 8% = $25
-        Legendary:\t\t\t 1% = $50, 1x Legendary key
-        '''
-
-        sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(50,10))
+        popups.chest_info("Starter")
 
 
     if event == "-LEGENDARY CHEST INFO-":
-        info = '''
-        Legendary Chest: (No multipliers) 
-        -------------------------------
-        Common:\t\t\t88% = $10
-        Rare:\t\t\t10% = $20
-        Epic:\t\t\t 1% = 1x Legendary key
-        Mythic:\t\t\t0.001% = 1x Mythic key
-        VOID:\t\t\t 0.00001% = -1% of all money (1/10M)
-        \n\n\n\n
-        *SECRET*:\t\t\t 0.0001% = $10M (1/1M)
-        '''
-        sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
+        popups.chest_info("Legendary")
 
     if event == "-MYTHIC CHEST INFO-":
-        info = '''
-        Mythic Chest: (No multipliers) 
-        -------------------------------
-        Common:\t\t\t90% = $1K
-        Rare:\t\t\t10% = $1.5K
-        Epic:\t\t\t 1% = $3K
-        Godlike:\t\t\t 0.00001% = 1x Godlike key (1/10M)
-        \n\n\n\n
-        *SECRET*:\t\t\t 0.0001% = $1T (1/1M)
-        '''
-
-        sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
+        popups.chest_info("Mythic")
 
 
     # -- REWARD BUTTONS
@@ -922,12 +926,12 @@ while True:
             # Increase prestige variable, check if prestige tab exists
             # * Only set the buy limit and par rolls to default, the rest are AT permanent upgrades
 
-            ascention_token_gained = 10+upgrades["extra_AT"]
+            ascension_token_gained = 10+upgrades["extra_AT"]
 
             total_chest_opened = 0
             prestige +=1
             current_prestige_currency = inventory[3]
-            inventory = [0,0,0,current_prestige_currency+ascention_token_gained]
+            inventory = [0,0,0,current_prestige_currency+ascension_token_gained]
             multipliers = [1,1,1]
             money = 1000
             # upgrades = {
