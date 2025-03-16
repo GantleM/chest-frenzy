@@ -1,8 +1,8 @@
 import numpy as np
+import uuid
 
-def roll(chest, options, chances, amount):
 
-    #TODO: If amount > 1m or 10m: Roll 100k random, then multiply results instead of actully that much??
+def roll(chest, options, chances, amount, item_bonus):
 
     # Description
     roll_results = [
@@ -53,6 +53,7 @@ def roll(chest, options, chances, amount):
         reward_count = dict(zip(options, estimated_counts.values()))
 
     else:
+        
         # Do rolls
         results = np.random.choice(chest_rewards, size=amount, p=chances)
 
@@ -60,7 +61,9 @@ def roll(chest, options, chances, amount):
         unique, counts = np.unique(results, return_counts=True)
 
         # Convert back to labels if needed (only for final output)
-        reward_count = dict(zip(options, counts))
+        #reward_count = dict(zip(options, counts))
+        reward_count = {options[unique[i]]: counts[i] for i in range(len(unique))}
+        
 
     print(reward_count)
     # print(type(roll_results))
@@ -77,8 +80,17 @@ def roll(chest, options, chances, amount):
         # Set amount of keys earned.
         roll_results[0] += reward_count.get("Legendary",0)
 
+        if item_bonus[0] == "key":
+            roll_results[0] = int(roll_results[0]*item_bonus[1])
+
+        elif item_bonus[0] == "money":
+            roll_results[-1] = int(roll_results[-1]*item_bonus[1])
+           
+        
+
+
         # Doesn't look like you're getting anything cause you spend X and this includes what you spent
-        log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {reward_count.get("Legendary",0):,} Legendary keys", "light gray"])
+        log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[0]:,} Legendary keys", "light gray"])
     
 
     if (chest == "LEGENDARY"):
@@ -92,15 +104,23 @@ def roll(chest, options, chances, amount):
         
         # adds how many times you got "void" -> 0.5x your money
         roll_results[-2][0] = reward_count.get("Void",0)
+        roll_results[1] += reward_count.get("Mythic",0)
+
+        if item_bonus[0] == "key":
+            roll_results[1] = int(roll_results[1]*item_bonus[1])
+
+        elif item_bonus[0] == "money":
+            roll_results[-1] = int(roll_results[-1]*item_bonus[1])
+
 
         if (roll_results[-2][0] > 0):
-            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {reward_count.get("Mythic",0):,} Mythic keys \n**YOU GOT UNLUCKY {reward_count.get("Void",0):,}x times!**", "light gray"]) 
+            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[1]:,} Mythic keys \n**YOU GOT UNLUCKY {reward_count.get("Void",0):,}x times!**", "light gray"]) 
         else:
-            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {reward_count.get("Mythic",0):,} Mythic keys", "light gray"])
+            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[1]:,} Mythic keys", "light gray"])
 
 
         
-        roll_results[1] += reward_count.get("Mythic",0)
+        
 
     if (chest == "MYTHIC"):
 
@@ -110,15 +130,90 @@ def roll(chest, options, chances, amount):
         roll_results[-1] += int(reward_count.get("Epic",0)) * 3000
         roll_results[-1] += int(reward_count.get("Secret",0)) * 1_000_000_000_000
         
+    
+        if item_bonus[0] == "money":
+            print(roll_results[-1], "and", item_bonus[1])
+            roll_results[-1] = int(roll_results[-1]*item_bonus[1])
+
 
         # If you get godlike, it changes message colour. 
         if (reward_count.get("Godlike",0) > 0):
             roll_results[2] += reward_count.get("Godlike",0)
-            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {reward_count.get("Godlike",0):,} Godlike keys", "yellow"])
+            
+            #! Need to be different as key is checked only if you got some
+            if item_bonus[0] == "key":
+                roll_results[2] = int(roll_results[2]*item_bonus[1])
+
+
+            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[2]:,} Godlike keys", "yellow"])
 
         else:
-            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {reward_count.get("Godlike",0):,} Godlike keys", "light gray"])
+            log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[2]:,} Godlike keys", "light gray"])
+
+    if (chest == "ASCENSION"):
+        # ["Common", "Rare", "Very rare", "Epic", "JACKPOT"]
+        roll_results[-1] += int(reward_count.get("Common",0)) * 10000
+        roll_results[-1] += int(reward_count.get("Rare",0)) * 15000
+        roll_results[-1] += int(reward_count.get("Very rare",0)) * 25000
+        roll_results[-1] += int(reward_count.get("Epic",0)) * 100000
+        roll_results[-1] += int(reward_count.get("JACKPOT",0)) * 1_000_000
+        
+
+        # If you get godlike, it changes message colour. 
+        if (reward_count.get("JACKPOT", 0) > 0):
+            log_to_add.append([f"YOU GOT A JACKPOT! ${roll_results[-1]:,}", "red"])
+
+        else:
+            log_to_add.append([f"You've rolled: ${roll_results[-1]:,}", "pink"])
+
 
     # Add log text to position -3.
     roll_results.insert(-2,log_to_add[0])
     return roll_results
+
+
+def item_chest_roll(float_chances, item_chances, rarity_chances):
+    item_float_category = np.random.choice([0.8,0.75,0.4,0], p=float_chances)
+                                  
+    if item_float_category == 0.8:
+        floatNum = np.random.uniform(0.8, 1.0000001)
+        
+    elif item_float_category == 0.75:
+        floatNum = np.random.uniform(0.75, 0.8000001)
+
+    elif item_float_category == 0.4:
+        floatNum = np.random.uniform(0.4, 0.7500001)
+
+    elif item_float_category == 0:
+        floatNum = np.random.uniform(0, 0.4000001)
+       
+    name = np.random.choice(["Fortune Cookie","Metal Detector", "X-Ray Goggles"],p=item_chances )
+
+    rarity = np.random.choice(["Paper", "Metal", "Emerald", "Ruby" , "Golden", "Diamond"], p=rarity_chances)
+
+
+    #print(round(floatNum,3))
+    #{"id": "iwx334212", "rarity":"Golden", "name":"Fortune Cookie", "float":0.234, "display": "Golden ⭐ Fortune Cookie [0.834]"},
+
+    floatNum = round(floatNum,3)
+    
+    if floatNum == 1:
+        display = f"{rarity} ⭐ {name} [{floatNum}]"
+        log = [f"You've rolled: {display}", "yellow"]
+    else:
+        display = f"{rarity} {name} [{floatNum}]"
+        log = [f"You've rolled: {display}", "light gray"]
+
+    generated_item = {
+        "id": str(uuid.uuid4()),
+        "rarity": rarity,
+        "name": name,
+        "float": floatNum,
+        "display": display
+        
+    }
+
+    result = [generated_item,log]
+    return(result)
+    # print(generated_item)
+    

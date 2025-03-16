@@ -54,6 +54,7 @@ def prestige_help():
         - II
         - III
         - VI
+        - VIII
         - X
         - XX
     
@@ -61,6 +62,60 @@ def prestige_help():
     
 
     '''
+
+    sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
+
+def item_help():
+
+    info = f'''
+    Item information!
+    -------------------------------
+    Each item has 3 modifiers on them. 
+    eg.: Golden Fortune Cookie [0.5]
+
+    Golden: effect
+    Fortune Cookie: What chest/action it is used at
+    [0.5]: Float number, how effective the effect is.
+
+    Below are all the effects you can get:
+
+    Tier 1
+    ------
+    1- Paper (money) (2x multiplier)
+    2- Metal (keys)  (2x multiplier)
+
+    Tier 2
+    ------
+    3- Emerald (money)(3x multiplier)
+    4- Ruby (keys)    (3x multiplier)
+
+    Tier 3
+    ------
+    5- Gold (money)   (4x multiplier)
+    6- Diamond (keys) (4x multiplier)
+
+    The following relate to each chest/action:
+
+    Fortune Cookie - Starter chest
+    Metal Detector - Legendary chest
+    X-Ray Goggles - Mythic chest
+
+    --------------
+    The float then determines how effective the multiplier is.
+    A golden fortune cookie [0.5] gives the following effect:
+
+    - Increases money gain
+    - 1x multiplier (2*0.5 = 1)
+    - Applies only for starter chest
+    ---------------
+
+    A perfect float [1.0] gives 2x effects:
+
+    eg.: 2x multiplier with perfect float => 4x
+
+
+    '''
+
 
     sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
 
@@ -102,6 +157,21 @@ def chest_info(chest):
             Godlike:\t\t\t 0.00001% = 1x Godlike key (1/10M)
             \n\n\n\n
             *SECRET*:\t\t\t 0.0001% = $1T (1/1M)
+            '''
+
+            sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
+
+        case "Ascension":
+            # ["Common", "Rare", "Very rare", "Epic", "JACKPOT"]
+            # [54, 30, 10, 5, 1]
+            info = '''
+            Ascension Chest: (No multipliers) 
+            -------------------------------
+            Common:\t\t\t54% = $10K
+            Rare:\t\t\t30% = $15K
+            Very rare:\t\t\t 10% = $25K
+            Epic:\t\t\t 5% = $100k
+            JACKPOT:\t\t\t 1% = $1M
             '''
 
             sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
