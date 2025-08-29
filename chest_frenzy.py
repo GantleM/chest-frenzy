@@ -85,8 +85,8 @@ else:
     #equipped_item = {"id": "21321seew", "rarity":2, "name":"Fortune Cookie", "float":0.324, "display": "Golden ⭐ Fortune Cookie [0.234]"}
     collection_data = [
         {"id": "21321seew", "rarity":5, "name":"Fortune Cookie", "float":1.0, "display": "Golden ⭐ Fortune Cookie [1.000]"},
-        {"id": "21321s3ew", "rarity":2, "name":"Metal Detector", "float":0.5, "display": "Golden ⭐ Metal Detector [0.5]"},
-        {"id": "21321s5ew", "rarity":2, "name":"X-Ray Goggles", "float":0.5, "display": "Golden ⭐ X-Ray Goggles [0.5]"}
+        {"id": "90321s3ew", "rarity":2, "name":"Metal Detector", "float":0.5, "display": "Golden Metal Detector [0.5]"},
+        {"id": "7921s5ew", "rarity":2, "name":"X-Ray Goggles", "float":0.5, "display": "Golden X-Ray Goggles [0.5]"}
     ]
     inventory = [0,0,0,0]
     prestige = 0
@@ -98,7 +98,8 @@ else:
         "upgrade_discount": 0,
         "multiplier_discount": 0,
         "extra_AT": 0,
-        "starter_money_increase": 0
+        "starter_money_increase": 0,
+        "collection_space_increase": 0
     }
 
     do_autosave()
@@ -175,7 +176,7 @@ def item_multiplier_effect(chest, current_item):
         Tier 1
         ------
         1- Paper (money)
-        2- Metal (keys)
+        2- Iron (keys)
 
         Tier 2
         ------
@@ -209,7 +210,7 @@ def item_multiplier_effect(chest, current_item):
         #! These are added onto it, eg.: 2x here means 3x in mathematically
         rarity_effects = {
             "Paper":["money", 2],
-            "Metal":["key", 2],
+            "Iron":["key", 2],
 
             "Emerald":["money", 3], 
             "Ruby":["key", 3],
@@ -301,6 +302,9 @@ inventory_col = [
 
 multipliers_col = [
     [
+        sg.Text("These upgrades increase the chance of key drops.")
+    ],
+    [
         sg.Text("Legendary:", size=(10, 1)), 
         sg.Text(f"{multipliers[0]}x", size=(5, 1), justification="right", key="-LEGENDARY X VALUE-"), 
         sg.Button("+", key="-LEGENDARY INC-"),
@@ -375,7 +379,7 @@ collection_col = [
     [
         sg.Button("Equip", key="-COLLECTION EQUIP-"), 
         sg.Button("Delete", key="-COLLECTION DELETE-"),
-        sg.Text(f"{len(collection_data)}/30 total items", key="-COLLECTION COUNTER-")
+        sg.Text(f"{len(collection_data)}/{30+upgrades["collection_space_increase"]} total items", key="-COLLECTION COUNTER-")
     ]
 ]
 
@@ -621,6 +625,30 @@ prestige10_tab = [
         sg.Text("20x", size=(4,1), pad=((15, 0), 6), key="-STARTER MONEY INCREASE PRICE-"),
         sg.Image(data=imgD.ascension_token_img, subsample=20, pad=(0, 0))
     ],
+    [
+        sg.Text("Max collection size:", size=(17, 1)), 
+        sg.Text(f"+{upgrades["collection_space_increase"]}", size=(7, 1), justification="right", key="-COLLECTION SPACE INCREASE VALUE-"), 
+        sg.Button("+", tooltip="+10", key="-COLLECTION SPACE INCREASE INC-"),
+
+        sg.Text("5x", size=(4,1), pad=((15, 0), 6), key="-COLLECTION SPACE INCREASE PRICE-"),
+        sg.Image(data=imgD.ascension_token_img, subsample=20, pad=(0, 0))
+    ]
+]
+
+prestige12_tab = [
+    [
+        sg.Text(f"Daily shop:")
+    ],
+    [
+        sg.Listbox([], size=(40, 4), select_mode=sg.LISTBOX_SELECT_MODE_SINGLE, key="-DAILY SHOP LB-")
+    ],
+    [
+        sg.Button("Buy selected", key="-DAILY SHOP BUY-"),
+        sg.VSeparator(),
+        sg.Text("20x", size=(4,1), pad=((15, 0), 5), key="-DAILY SHOP PRICE-"),
+        sg.Image(data=imgD.ascension_token_img, subsample=20, pad=(0, 0)), 
+        
+    ]
 ]
 
 # Dynamically make a list of tabs, updates
@@ -636,7 +664,8 @@ def get_prestige_tabs(current_prestige):
         3: ["III", prestige3_tab, current_prestige < 3],
         6: ["VI", prestige6_tab, current_prestige < 6],
         8: ["VIII", prestige8_tab, current_prestige< 8],
-        10: ["X", prestige10_tab, current_prestige < 10]
+        10: ["X", prestige10_tab, current_prestige < 10],
+        12: ["XII", prestige12_tab, current_prestige < 12]
     }
     prestige_tabs = []
     counter = 0
@@ -731,7 +760,7 @@ def update_upgrades():
 def update_collection():
     window["-COLLECTION EQUIPPED-"].update(f"Equipped: {equipped_item["display"]}")
     window["-COLLECTION LB-"].update(get_collection_list(collection_data))
-    window["-COLLECTION COUNTER-"].update(f"{len(collection_data)}/30 total items")
+    window["-COLLECTION COUNTER-"].update(f"{len(collection_data)}/{30+upgrades["collection_space_increase"]} total items")
 
 def update_prestige():
 
@@ -819,12 +848,42 @@ def update_prestige_tab(tab_name):
             pass
             # NOTHING NEEDS UPDATING
 
+        case "VIII":
+            pass
+            # NOTHING NEEDS UPDATING
+
         case "X":
-            window["-BUY LIMIT CAP INCREASE VALUE-"].update(upgrades["max_buy_limit_cap_increase"])
+            window["-BUY LIMIT CAP INCREASE VALUE-"].update(f"+{upgrades["max_buy_limit_cap_increase"]} lvl")
             update_button("-BUY LIMIT CAP INCREASE INC-", upgrades["max_buy_limit_cap_increase"] < 5)
 
-            window["-STARTER MONEY INCREASE VALUE-"].update(nf.sizeof_number(upgrades["starter_money_increase"],"$"))
+            window["-STARTER MONEY INCREASE VALUE-"].update(f"+{nf.sizeof_number(upgrades["starter_money_increase"],"$")}")
             update_button("-STARTER MONEY INCREASE INC-", upgrades["starter_money_increase"] < 10000)
+
+            window["-COLLECTION SPACE INCREASE VALUE-"].update(f"+{upgrades["collection_space_increase"]}")
+            update_button("-COLLECTION SPACE INCREASE INC-", upgrades["collection_space_increase"] < 70)
+
+
+        case "XII":
+
+            weights=[1,15,35,49]
+            floatChances = [i/100 for i in weights]
+
+            weights=[30,50,20]
+            itemChances = [i/100 for i in weights]
+
+            weights=[39,39, 10,10 , 1, 1]
+            rarityChances = [i/100 for i in weights]
+
+
+            result = roll.item_chest_roll(floatChances, itemChances, rarityChances, True)
+
+            for item in result:
+                for owned_items in collection_data:
+                    if item["id"] == owned_items["id"]:
+                        print("YES")
+                        result.remove(item)
+
+            window["-DAILY SHOP LB-"].update(get_collection_list(result))
 
 def update_roll_counter(change_by = 0):
     global currently_opening
@@ -916,7 +975,7 @@ def chest_roll_items(floatChances, itemChances, rarityChances):
     global log_text
     global collection_data
 
-    result = roll.item_chest_roll(floatChances, itemChances, rarityChances)
+    result = roll.item_chest_roll(floatChances, itemChances, rarityChances, False)
 
     item_rolled = result[0]
 
@@ -1036,8 +1095,14 @@ while True:
             case "-P TAB-6-":
                 update_prestige_tab("VI")
 
+            case "-P TAB-8-":
+                update_prestige_tab("VIII") 
+
             case "-P TAB-10-":
                 update_prestige_tab("X")
+
+            case "-P TAB-12-":
+                update_prestige_tab("XII")
 
     # -- COLLECTION BUTTONS
     if event == "-COLLECTION EQUIP-":
@@ -1211,6 +1276,20 @@ while True:
             update_inventory()
             do_autosave()
 
+
+    if event == "-COLLECTION SPACE INCREASE INC-":
+        price_str = window["-COLLECTION SPACE INCREASE PRICE-"].get()
+        price_of_upgrade = int(price_str[:-1])
+
+        if inventory[3] >= price_of_upgrade:
+            inventory[3] -= price_of_upgrade
+            upgrades["collection_space_increase"] += 10
+            
+            update_prestige_tab("X")
+            update_collection()
+            update_inventory()
+            do_autosave()
+
     # -- EXCHANGE 
 
     if event == "-EXCHANGE LEGENDARY-":
@@ -1320,7 +1399,23 @@ while True:
             update_prestige_tab("III")
             do_autosave()
 
+    # -- DAILY ITEM SHOP
+    if event == "-DAILY SHOP BUY-":
+        price_str = window["-DAILY SHOP PRICE-"].get()
+        price_of_item = int(price_str[:-1])
+        if (inventory[3] >= price_of_item):
+            inventory[3] -= price_of_item
+            selected_items = values["-DAILY SHOP LB-"]
 
+            if selected_items:
+                item_to_buy = selected_items[0]
+                # DOES NOT WORK- need the item stats/object - returns the string to display
+                # collection_data.append(item_to_buy)
+
+            do_autosave()
+            update_prestige_tab("XII")
+            update_inventory()
+            update_collection()
 
     # -- CHEST BUTTONS
 
@@ -1485,7 +1580,7 @@ while True:
             # ! This means more are opening that able to, don't want to interupt gameplay buy bad practice!!!
 
         elif (inventory[3] >= price_of_roll):
-            if(len(collection_data) < 30):
+            if(len(collection_data) < 30+upgrades["collection_space_increase"]):
                 if(roll_amount <= upgrade_value_buylimit()):
                     weights=[1,15,35,49]
                     floatChances = [i/100 for i in weights]
