@@ -123,7 +123,8 @@ def chest_info(chest):
     match chest:
         case "Starter":
             info = '''
-            Starter Chest: (No multipliers) 
+            Starter Chest: (Stats shown with no multipliers) 
+            Affected by: Fortune Cookie
             -------------------------------
             Common:\t\t\t40% = $10
             Uncommon:\t\t\t30% = $10
@@ -135,7 +136,8 @@ def chest_info(chest):
 
         case "Legendary":
             info = '''
-            Legendary Chest: (No multipliers) 
+            Legendary Chest: (Stats shown with no multipliers) 
+            Affected by: Metal Detector
             -------------------------------
             Common:\t\t\t88% = $10
             Rare:\t\t\t10% = $20
@@ -149,7 +151,8 @@ def chest_info(chest):
 
         case "Mythic":
             info = '''
-            Mythic Chest: (No multipliers) 
+            Mythic Chest: (Stats shown with no multipliers) 
+            Affected by: X-Ray Goggles
             -------------------------------
             Common:\t\t\t90% = $1K
             Rare:\t\t\t10% = $1.5K
@@ -165,7 +168,7 @@ def chest_info(chest):
             # ["Common", "Rare", "Very rare", "Epic", "JACKPOT"]
             # [54, 30, 10, 5, 1]
             info = '''
-            Ascension Chest: (No multipliers) 
+            Ascension Chest: (Stats shown with no multipliers) 
             -------------------------------
             Common:\t\t\t54% = $10K
             Rare:\t\t\t30% = $15K

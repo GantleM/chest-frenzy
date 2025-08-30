@@ -1,6 +1,6 @@
 import numpy as np
 import uuid
-
+import datetime
 
 def roll(chest, options, chances, amount, item_bonus):
 
@@ -172,48 +172,116 @@ def roll(chest, options, chances, amount, item_bonus):
     return roll_results
 
 
-def item_chest_roll(float_chances, item_chances, rarity_chances):
-    item_float_category = np.random.choice([0.8,0.75,0.4,0], p=float_chances)
-                                  
-    if item_float_category == 0.8:
-        floatNum = np.random.uniform(0.8, 1.0000001)
-        
-    elif item_float_category == 0.75:
-        floatNum = np.random.uniform(0.75, 0.8000001)
-
-    elif item_float_category == 0.4:
-        floatNum = np.random.uniform(0.4, 0.7500001)
-
-    elif item_float_category == 0:
-        floatNum = np.random.uniform(0, 0.4000001)
-       
-    name = np.random.choice(["Fortune Cookie","Metal Detector", "X-Ray Goggles"],p=item_chances )
-
-    rarity = np.random.choice(["Paper", "Metal", "Emerald", "Ruby" , "Golden", "Diamond"], p=rarity_chances)
+def item_chest_roll(float_chances, item_chances, rarity_chances, daily_shop):
 
 
-    #print(round(floatNum,3))
-    #{"id": "iwx334212", "rarity":"Golden", "name":"Fortune Cookie", "float":0.234, "display": "Golden ⭐ Fortune Cookie [0.834]"},
+    if daily_shop:
 
-    floatNum = round(floatNum,3)
-    
-    if floatNum == 1:
-        display = f"{rarity} ⭐ {name} [{floatNum}]"
-        log = [f"You've rolled: {display}", "yellow"]
+        result = []
+
+
+        today_date = datetime.datetime.now()
+        today_seed = int(f"{today_date.year}{today_date.month}{today_date.day}")
+
+        daily_shop_random = np.random.default_rng(seed=today_seed)
+        namespace = uuid.UUID('12345678-1234-5678-1234-567812345678')
+
+
+        counter = 0
+        for i in range(4):
+            counter += 1
+
+            item_float_category = daily_shop_random.choice([0.8,0.75,0.4,0], p=float_chances)
+                                    
+            if item_float_category == 0.8:
+                floatNum = daily_shop_random.uniform(0.8, 1.0000001)
+                
+            elif item_float_category == 0.75:
+                floatNum = daily_shop_random.uniform(0.75, 0.8000001)
+
+            elif item_float_category == 0.4:
+                floatNum = daily_shop_random.uniform(0.4, 0.7500001)
+
+            elif item_float_category == 0:
+                floatNum = daily_shop_random.uniform(0, 0.4000001)
+            
+            name = daily_shop_random.choice(["Fortune Cookie","Metal Detector", "X-Ray Goggles"],p=item_chances )
+
+            rarity = daily_shop_random.choice(["Paper", "Iron", "Emerald", "Ruby" , "Golden", "Diamond"], p=rarity_chances)
+
+
+            #print(round(floatNum,3))
+            #{"id": "iwx334212", "rarity":"Golden", "name":"Fortune Cookie", "float":0.234, "display": "Golden ⭐ Fortune Cookie [0.834]"},
+
+            floatNum = round(floatNum,3)
+            
+            if floatNum == 1:
+                display = f"{rarity} ⭐ {name} [{floatNum}]"
+                log = [f"You've rolled: {display}", "yellow"]
+            else:
+                display = f"{rarity} {name} [{floatNum}]"
+                log = [f"You've rolled: {display}", "light gray"]
+
+
+            uuid_seed = str(today_seed)+str(counter)
+            generated_item = {
+                "id": str(uuid.uuid5(namespace, uuid_seed)),
+                "rarity": rarity,
+                "name": name,
+                "float": floatNum,
+                "display": display,
+                "shop_bought": True
+                
+            }
+            result.append(generated_item)
+
+        return result
+
+
+
     else:
-        display = f"{rarity} {name} [{floatNum}]"
-        log = [f"You've rolled: {display}", "light gray"]
+        item_float_category = np.random.choice([0.8,0.75,0.4,0], p=float_chances)
+                                    
+        if item_float_category == 0.8:
+            floatNum = np.random.uniform(0.8, 1.0000001)
+            
+        elif item_float_category == 0.75:
+            floatNum = np.random.uniform(0.75, 0.8000001)
 
-    generated_item = {
-        "id": str(uuid.uuid4()),
-        "rarity": rarity,
-        "name": name,
-        "float": floatNum,
-        "display": display
+        elif item_float_category == 0.4:
+            floatNum = np.random.uniform(0.4, 0.7500001)
+
+        elif item_float_category == 0:
+            floatNum = np.random.uniform(0, 0.4000001)
         
-    }
+        name = np.random.choice(["Fortune Cookie","Metal Detector", "X-Ray Goggles"],p=item_chances )
 
-    result = [generated_item,log]
-    return(result)
+        rarity = np.random.choice(["Paper", "Iron", "Emerald", "Ruby" , "Golden", "Diamond"], p=rarity_chances)
+
+
+        #print(round(floatNum,3))
+        #{"id": "iwx334212", "rarity":"Golden", "name":"Fortune Cookie", "float":0.234, "display": "Golden ⭐ Fortune Cookie [0.834]"},
+
+        floatNum = round(floatNum,3)
+        
+        if floatNum == 1:
+            display = f"{rarity} ⭐ {name} [{floatNum}]"
+            log = [f"You've rolled: {display}", "yellow"]
+        else:
+            display = f"{rarity} {name} [{floatNum}]"
+            log = [f"You've rolled: {display}", "light gray"]
+
+        generated_item = {
+            "id": str(uuid.uuid4()),
+            "rarity": rarity,
+            "name": name,
+            "float": floatNum,
+            "display": display,
+            "shop_bought": False
+            
+        }
+
+        result = [generated_item,log]        
+        return(result)
     # print(generated_item)
     
