@@ -36,7 +36,7 @@ This is a "cookie clicker" type game, but with chests!
 
 
 ---
-### In-game content
+### 🎮 In-game content
 **Prestige 20 tab**  ![status](https://img.shields.io/badge/Prestige%2020-Planning-lightgrey)  
     → 🔄 Able to trade items with players  
     → 💰 Trade currencies (eg AT + *new currency?*)
@@ -110,6 +110,7 @@ Affected by: X-Ray Goggles
 ## Feedback
 
 If you have any feedback, please reach out to me at gantlem.contact@gmail.com
+
 
 
 
