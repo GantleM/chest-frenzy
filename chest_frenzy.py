@@ -1,4 +1,5 @@
-import PySimpleGUI as sg
+# import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 import numpy as np
 import threading
 import os
@@ -31,7 +32,7 @@ def do_autosave():
 # * IMORTANT VARIABLES
 version = 4.05
 currently_opening = 0
-
+daily_shop_items = ["Loading"]
 
     # Can use uuid to generate cooler id 
     #import uuid  # To generate unique IDs for each item
@@ -802,6 +803,9 @@ def update_prestige():
     
 
 def update_prestige_tab(tab_name):
+
+    global daily_shop_items
+
     match tab_name:
         case "I":
 
@@ -865,25 +869,41 @@ def update_prestige_tab(tab_name):
 
         case "XII":
 
-            weights=[1,15,35,49]
-            floatChances = [i/100 for i in weights]
+            # If not yet loaded, then load the items
+            if daily_shop_items and daily_shop_items[0] == "Loading":
 
-            weights=[30,50,20]
-            itemChances = [i/100 for i in weights]
+                weights=[1,15,35,49]
+                floatChances = [i/100 for i in weights]
 
-            weights=[39,39, 10,10 , 1, 1]
-            rarityChances = [i/100 for i in weights]
+                weights=[30,50,20]
+                itemChances = [i/100 for i in weights]
+
+                weights=[39,39, 10,10 , 1, 1]
+                rarityChances = [i/100 for i in weights]
+
+                result = roll.item_chest_roll(floatChances, itemChances, rarityChances, True)
 
 
-            result = roll.item_chest_roll(floatChances, itemChances, rarityChances, True)
+                #Re-write results
+                #if not any --> any means if any are true 
+                result = [
+                    item for item in result  if not any(item["id"] == owned_items["id"] for owned_items in collection_data)
+                ]
+    
+                if not result:
+                    print("All daily items bought")
+                    daily_shop_items = []
 
-            for item in result:
-                for owned_items in collection_data:
-                    if item["id"] == owned_items["id"]:
-                        print("YES")
-                        result.remove(item)
-
-            window["-DAILY SHOP LB-"].update(get_collection_list(result))
+                else:
+                    daily_shop_items = result
+            
+            #After checking if list already is loaded, just update display
+            if daily_shop_items:
+                update_button("-DAILY SHOP BUY-", True)
+                window["-DAILY SHOP LB-"].update(get_collection_list(daily_shop_items))
+            else:
+                update_button("-DAILY SHOP BUY-", False)
+                window["-DAILY SHOP LB-"].update(["All items bought. Come back tomorrow!"])
 
 def update_roll_counter(change_by = 0):
     global currently_opening
@@ -1409,6 +1429,10 @@ while True:
 
             if selected_items:
                 item_to_buy = selected_items[0]
+                for item in daily_shop_items:
+                    if item_to_buy.endswith(f"(ID: {item['id']})"):
+                        daily_shop_items.remove(item)
+                        collection_data.append(item)
                 # DOES NOT WORK- need the item stats/object - returns the string to display
                 # collection_data.append(item_to_buy)
 
