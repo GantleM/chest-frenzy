@@ -1,5 +1,6 @@
 # import PySimpleGUI as sg
 import FreeSimpleGUI as sg
+import requests
 
 def tutorial(version):
 
@@ -82,7 +83,7 @@ def item_help():
     Tier 1
     ------
     1- Paper (money) (2x multiplier)
-    2- Metal (keys)  (2x multiplier)
+    2- Iron (keys)  (2x multiplier)
 
     Tier 2
     ------
@@ -172,9 +173,23 @@ def chest_info(chest):
             -------------------------------
             Common:\t\t\t54% = $10K
             Rare:\t\t\t30% = $15K
-            Very rare:\t\t\t 10% = $25K
-            Epic:\t\t\t 5% = $100k
-            JACKPOT:\t\t\t 1% = $1M
+            Very rare:\t\t\t 10% = $125K
+            Epic:\t\t\t 5% = $10M
+            JACKPOT:\t\t\t 1% = $1T
             '''
 
             sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
+
+def redeem_codes():
+    code = sg.popup_get_text('Enter code to redeem')
+
+    code_data = {
+        "code": code
+    }
+
+    try:
+        response = requests.post("https://GantleM.pythonanywhere.com/codes", json=code_data)
+        return response.json()
+    except:
+        return "Error"
+    

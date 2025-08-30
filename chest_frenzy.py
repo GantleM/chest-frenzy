@@ -26,7 +26,7 @@ IDEAS:
 
 
 def do_autosave():
-    save_game.write_save(total_chest_opened,current_theme,owned_themes,multipliers,equipped_item, collection_data,inventory,prestige,money,upgrades)
+    save_game.write_save(total_chest_opened,current_theme,owned_themes,multipliers,equipped_item, collection_data,inventory,prestige,money,upgrades,used_codes)
 
 
 # * IMORTANT VARIABLES
@@ -72,6 +72,7 @@ if(os.path.isfile("saves/save1.json")):
     prestige = saved_data["prestige"]
     money = saved_data["money"]
     upgrades = saved_data["upgrades"]
+    used_codes = saved_data["used_codes"]
     
 else:
 
@@ -84,10 +85,10 @@ else:
     multipliers = [1,1,1]
     equipped_item = {"display":"None","id":"None", "name":"None"}
     #equipped_item = {"id": "21321seew", "rarity":2, "name":"Fortune Cookie", "float":0.324, "display": "Golden ⭐ Fortune Cookie [0.234]"}
+    #{"id": "21321seew", "rarity":"Golden", "name":"Fortune Cookie", "float":1.0, "display": "Golden ⭐ Fortune Cookie [1.000]", "shop_bought": True},
+    #{"id": "7921s5ew", "rarity":"Golden", "name":"X-Ray Goggles", "float":0.5, "display": "Golden X-Ray Goggles [0.5]", "shop_bought": True}
     collection_data = [
-        {"id": "21321seew", "rarity":5, "name":"Fortune Cookie", "float":1.0, "display": "Golden ⭐ Fortune Cookie [1.000]"},
-        {"id": "90321s3ew", "rarity":2, "name":"Metal Detector", "float":0.5, "display": "Golden Metal Detector [0.5]"},
-        {"id": "7921s5ew", "rarity":2, "name":"X-Ray Goggles", "float":0.5, "display": "Golden X-Ray Goggles [0.5]"}
+        
     ]
     inventory = [0,0,0,0]
     prestige = 0
@@ -102,6 +103,7 @@ else:
         "starter_money_increase": 0,
         "collection_space_increase": 0
     }
+    used_codes = []
 
     do_autosave()
 
@@ -189,6 +191,8 @@ def item_multiplier_effect(chest, current_item):
         5- Gold (money)
         6- Diamond (keys)
     '''
+
+    
     #Since all have the same effects, if the chest rolles has a multi
     #Then it will do the calculations for it
     do_effect = False
@@ -230,12 +234,11 @@ def item_multiplier_effect(chest, current_item):
         else:
             effects_returned[1] *= current_item["float"]
 
-
         # By default it's multiplied by 1 (no change, but needed to be adder here)
         effects_returned[1] += 1
         effects_returned[1] = round(effects_returned[1],3)
 
-        print(effects_returned)
+        # print(effects_returned)
         return(effects_returned)
     
     else:
@@ -1039,7 +1042,8 @@ right_column = [
 menu_def = [
     ["Settings", ["Save::-MANUAL SAVE-", "Load (coming soon)"]],
     ["Performance", ["Coming soon...", "Coming soon...."] ],
-    ["Help",["Basic::-BASIC HELP-", "Prestige info::-PRESTIGE HELP-", "Item info::-ITEM HELP-" ]]
+    ["Help",["Basic::-BASIC HELP-", "Prestige info::-PRESTIGE HELP-", "Item info::-ITEM HELP-" ]],
+    ["Extras",["Redeem codes::-REDEEM CODES-"]]
 ]
 
  #bar_background_color=sg.theme_background_color()
@@ -1086,6 +1090,52 @@ while True:
 
     if event.find("-ITEM HELP-") != -1:
         popups.item_help()
+
+    if event.find("-REDEEM CODES-") != -1:
+        
+        result_of_code = popups.redeem_codes()
+        if result_of_code == "Error":
+            sg.popup("Error occured, try again later..")
+        else:
+            #print(result_of_code)
+
+            if result_of_code["result"] == "found":
+                if result_of_code["reward"][-1] not in used_codes:
+                    used_codes.append(result_of_code["reward"][-1])
+                    inventory = [inventory[i] + result_of_code["reward"][0][i] for i in range(len(inventory))]
+                    
+                    code_items = result_of_code["reward"][1]
+                    if len(code_items) >= 1:
+                        for item in code_items:
+                            collection_data.append(item)
+
+
+                    # RESULT MESSAGE:
+                    msg = "You got:"
+
+                    currency_rewards = result_of_code["reward"][0]
+                    currency_names = ["Legendary keys", "Mythic keys", "Godlike keys", "Ascention tokens"]
+                    item_rewards = result_of_code["reward"][1]
+
+
+                    for count, name in zip(currency_rewards, currency_names):
+                        if count > 0:
+                            msg += f"\n- {count} {name}"
+
+                    if item_rewards != []:
+                        for item in item_rewards:
+                            msg += f"\n- 1x {item["display"]}"
+
+                    sg.popup(msg)
+    
+                    do_autosave()
+                    update_inventory()
+                    update_collection()
+                else:
+                    sg.popup("Code already redeemed.")
+            else:
+                    sg.popup("Code not found/expired..")
+
 
 
     # -- TAB UPDATES -- #

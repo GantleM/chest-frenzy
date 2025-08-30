@@ -20,7 +20,7 @@ def generate_hash(data):
 
 
 
-def write_save(total_chest_opened_value,current_theme_value,owned_themes_value,multipliers_value,equipped_item_value, collection_data_value, inventory_value,prestige_value,money_value, upgrades_value):
+def write_save(total_chest_opened_value,current_theme_value,owned_themes_value,multipliers_value,equipped_item_value, collection_data_value, inventory_value,prestige_value,money_value, upgrades_value, used_codes_value):
  
     # Data to be written
     data = {
@@ -33,7 +33,8 @@ def write_save(total_chest_opened_value,current_theme_value,owned_themes_value,m
         "inventory": inventory_value,
         "prestige": prestige_value,
         "money": money_value,
-        "upgrades": upgrades_value
+        "upgrades": upgrades_value,
+        "used_codes": used_codes_value
     }
  
     # Serializing json

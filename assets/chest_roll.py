@@ -65,7 +65,7 @@ def roll(chest, options, chances, amount, item_bonus):
         reward_count = {options[unique[i]]: counts[i] for i in range(len(unique))}
         
 
-    print(reward_count)
+    # print(reward_count)
     # print(type(roll_results))
     # print(type(reward_count))
     
@@ -132,7 +132,7 @@ def roll(chest, options, chances, amount, item_bonus):
         
     
         if item_bonus[0] == "money":
-            print(roll_results[-1], "and", item_bonus[1])
+            # print(roll_results[-1], "and", item_bonus[1])
             roll_results[-1] = int(roll_results[-1]*item_bonus[1])
 
 
@@ -154,9 +154,9 @@ def roll(chest, options, chances, amount, item_bonus):
         # ["Common", "Rare", "Very rare", "Epic", "JACKPOT"]
         roll_results[-1] += int(reward_count.get("Common",0)) * 10000
         roll_results[-1] += int(reward_count.get("Rare",0)) * 15000
-        roll_results[-1] += int(reward_count.get("Very rare",0)) * 25000
-        roll_results[-1] += int(reward_count.get("Epic",0)) * 100000
-        roll_results[-1] += int(reward_count.get("JACKPOT",0)) * 1_000_000
+        roll_results[-1] += int(reward_count.get("Very rare",0)) * 125000
+        roll_results[-1] += int(reward_count.get("Epic",0)) * 10_000_000
+        roll_results[-1] += int(reward_count.get("JACKPOT",0)) * 1_000_000_000_000
         
 
         # If you get godlike, it changes message colour. 
