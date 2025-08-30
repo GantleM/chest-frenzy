@@ -21,7 +21,7 @@ This is a "cookie clicker" type game, but with chests!
     The parallel open ugprade allows multiple batches of chests to be opened simultaneously. 
 
 ## 🔗 Links
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://katherineoelsner.com/)  
+[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://gantlem.rf.gd/)  
 
 
 ## 🚀 Roadmap
@@ -110,6 +110,7 @@ Affected by: X-Ray Goggles
 ## Feedback
 
 If you have any feedback, please reach out to me at gantlem.contact@gmail.com
+
 
 
 
