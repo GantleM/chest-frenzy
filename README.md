@@ -111,7 +111,10 @@ Affected by: X-Ray Goggles
 
 If you have any feedback, please reach out to me at gantlem.contact@gmail.com
 
-
+----
+Sneaky codes if you read this far ;) 
+- welcometochestfrenzy
+- gantlemdagoat 
 
 
 
