@@ -21,36 +21,36 @@ This is a "cookie clicker" type game, but with chests!
     The parallel open ugprade allows multiple batches of chests to be opened simultaneously. 
 
 ## 🔗 Links
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://katherineoelsner.com/)
+[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://katherineoelsner.com/)  
 
 
 ## 🚀 Roadmap
 
-**🌐 Website**  ![status](https://img.shields.io/badge/Website-In%20Progress-yellow)
+**🌐 Website**  ![status](https://img.shields.io/badge/Website-In%20Progress-yellow)  
     → Online trading for items
 
 
-**🛠 Optimization**  ![status](https://img.shields.io/badge/Website-In%20Progress-yellow)
+**🛠 Optimization**  ![status](https://img.shields.io/badge/Website-In%20Progress-yellow)  
     → Speed up main loop  
     → Refactor main into functions/modules
 
 
 ---
 ### In-game content
-**Prestige 20 tab**  ![status](https://img.shields.io/badge/Prestige%2020-Planning-lightgrey)
+**Prestige 20 tab**  ![status](https://img.shields.io/badge/Prestige%2020-Planning-lightgrey)  
     → 🔄 Able to trade items with players  
     → 💰 Trade currencies (eg AT + *new currency?*)
 
 
-**Prestige 50 tab**  ![status](https://img.shields.io/badge/Prestige%2050-TBD-red)
+**Prestige 50 tab**  ![status](https://img.shields.io/badge/Prestige%2050-TBD-red)  
     → ?? *Progression automation (auto chest opener etc)* ??
 
 
-**Prestige 75 tab**  ![status](https://img.shields.io/badge/Prestige%2075-TBD-red)
+**Prestige 75 tab**  ![status](https://img.shields.io/badge/Prestige%2075-TBD-red)  
     → ????
 
 
-**Prestige 100 tab**  ![status](https://img.shields.io/badge/Prestige%20100-TBD-red)
+**Prestige 100 tab**  ![status](https://img.shields.io/badge/Prestige%20100-TBD-red)  
     → ????
 
 
@@ -110,5 +110,6 @@ Affected by: X-Ray Goggles
 ## Feedback
 
 If you have any feedback, please reach out to me at gantlem.contact@gmail.com
+
 
 
