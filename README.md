@@ -60,7 +60,7 @@ This is a "cookie clicker" type game, but with chests!
 
 ### Starter Chest
 
-| Rairty | Drop Chance | Reward |
+| Rarity | Drop Chance | Reward |
 | ----------------- | --- | ---|
 | Common        | 40%   | $10|
 | Uncommon      | 30%   | $10|
@@ -115,6 +115,7 @@ If you have any feedback, please reach out to me at gantlem.contact@gmail.com
 Sneaky codes if you read this far ;) 
 - welcometochestfrenzy
 - gantlemdagoat 
+
 
 
 
