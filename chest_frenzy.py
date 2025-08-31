@@ -101,7 +101,8 @@ else:
         "multiplier_discount": 0,
         "extra_AT": 0,
         "starter_money_increase": 0,
-        "collection_space_increase": 0
+        "collection_space_increase": 0,
+        "vow_of_sacrifice" : False
     }
     used_codes = []
 
@@ -941,6 +942,7 @@ def adjust_weights(options, chances, item_to_increase, increase_factor):
 
 # - CHEST ROLLING TECH -
 def roll_chest(chest, options, chances, amount, item_bonus=["None",1]):
+    global upgrades
     global money
     global inventory
     global log_text
@@ -956,7 +958,9 @@ def roll_chest(chest, options, chances, amount, item_bonus=["None",1]):
     0       -1-Money to add
     
     '''   
-    roll_result = roll.roll(chest, options, chances, amount, item_bonus)  
+
+    hasVow = upgrades["vow_of_sacrifice"]
+    roll_result = roll.roll(chest, options, chances, amount, item_bonus, hasVow)  
 
     time.sleep(0.3)
     # Checks if legendary chest VOID was rolled, then applies it.
@@ -967,7 +971,7 @@ def roll_chest(chest, options, chances, amount, item_bonus=["None",1]):
     
     # Adds total money earned and the log message
     # * MONEY NEEDS TO BE IN PYTHON INT!!! roll_result = numpy int.
-    previous_money = money
+    previous_money = money 
     money = previous_money + int(roll_result[-1])
     log_text.append(roll_result[-3])
 

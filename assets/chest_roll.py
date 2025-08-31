@@ -2,7 +2,45 @@ import numpy as np
 import uuid
 import datetime
 
-def roll(chest, options, chances, amount, item_bonus):
+def apply_multipliers(chest, roll_results, item_bonus, hasVow):
+    
+    vow_of_sacrifice_boost = 10
+
+    chest_key_reward_positions = {
+        "STARTER"   : 0,
+        "LEGENDARY" : 1,
+        "MYTHIC"    : 2
+    }
+
+
+
+
+
+    if item_bonus[0] == "key":
+        # print("Applied key bonus")
+        if hasVow:
+            roll_results[chest_key_reward_positions[chest]] = int(roll_results[0]*(item_bonus[1]+vow_of_sacrifice_boost))
+        else:
+            roll_results[0] = int(roll_results[0]*item_bonus[1])
+
+    elif item_bonus[0] == "money":
+            # print("Applied money bonus")
+            roll_results[-1] = int(roll_results[-1]*item_bonus[1])
+
+            # Get vow bonus on keys regardless of item
+            if hasVow:
+                roll_results[chest_key_reward_positions[chest]] = int(roll_results[0]*(item_bonus[1]+vow_of_sacrifice_boost))
+
+    else:
+        if hasVow:
+            print("No booster, but has vow")
+            roll_results[chest_key_reward_positions[chest]] = int(roll_results[0]*vow_of_sacrifice_boost)
+    
+
+    return roll_results
+
+
+def roll(chest, options, chances, amount, item_bonus, vow_of_sacrifice):
 
     # Description
     roll_results = [
@@ -20,7 +58,7 @@ def roll(chest, options, chances, amount, item_bonus):
 
     #* If more than 1M rolls, then simulate. Otherwise, do actual rolls.
     max_Real_ROLLS = 1_000_000
-
+    
     if(amount > max_Real_ROLLS):
 
         if (amount > 100_000_000_000):
@@ -80,15 +118,17 @@ def roll(chest, options, chances, amount, item_bonus):
         # Set amount of keys earned.
         roll_results[0] += reward_count.get("Legendary",0)
 
-        if item_bonus[0] == "key":
-            roll_results[0] = int(roll_results[0]*item_bonus[1])
 
-        elif item_bonus[0] == "money":
-            roll_results[-1] = int(roll_results[-1]*item_bonus[1])
-           
+        # FIRST APPLY VOW OF SACRIFICE
+        # If you have (eg gold fc) you still gain profits 
         
+        if vow_of_sacrifice:
+            roll_results[-1] = amount*10
 
-
+        #-------------------
+        roll_results = apply_multipliers(chest, roll_results, item_bonus, vow_of_sacrifice)
+    
+    
         # Doesn't look like you're getting anything cause you spend X and this includes what you spent
         log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[0]:,} Legendary keys", "light gray"])
     
@@ -106,12 +146,8 @@ def roll(chest, options, chances, amount, item_bonus):
         roll_results[-2][0] = reward_count.get("Void",0)
         roll_results[1] += reward_count.get("Mythic",0)
 
-        if item_bonus[0] == "key":
-            roll_results[1] = int(roll_results[1]*item_bonus[1])
 
-        elif item_bonus[0] == "money":
-            roll_results[-1] = int(roll_results[-1]*item_bonus[1])
-
+        roll_results = apply_multipliers(chest, roll_results, item_bonus, vow_of_sacrifice)
 
         if (roll_results[-2][0] > 0):
             log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[1]:,} Mythic keys \n**YOU GOT UNLUCKY {reward_count.get("Void",0):,}x times!**", "light gray"]) 
@@ -130,23 +166,14 @@ def roll(chest, options, chances, amount, item_bonus):
         roll_results[-1] += int(reward_count.get("Epic",0)) * 3000
         roll_results[-1] += int(reward_count.get("Secret",0)) * 1_000_000_000_000
         
-    
-        if item_bonus[0] == "money":
-            # print(roll_results[-1], "and", item_bonus[1])
-            roll_results[-1] = int(roll_results[-1]*item_bonus[1])
 
+
+        roll_results[2] += reward_count.get("Godlike",0)  
+        roll_results = apply_multipliers(chest, roll_results, item_bonus, vow_of_sacrifice)
 
         # If you get godlike, it changes message colour. 
-        if (reward_count.get("Godlike",0) > 0):
-            roll_results[2] += reward_count.get("Godlike",0)
-            
-            #! Need to be different as key is checked only if you got some
-            if item_bonus[0] == "key":
-                roll_results[2] = int(roll_results[2]*item_bonus[1])
-
-
+        if (roll_results[2] > 0):
             log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[2]:,} Godlike keys", "yellow"])
-
         else:
             log_to_add.append([f"You've rolled: ${roll_results[-1]:,} and {roll_results[2]:,} Godlike keys", "light gray"])
 
