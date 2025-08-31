@@ -73,7 +73,7 @@ Affected by: Fortune Cookie
 
 ### Legendary Chest
 
-| Rairty | Drop Chance | Reward |
+| Rarity | Drop Chance | Reward |
 | ----------------- | --- | ---|
 | Common   | 88%                     | $10|
 | Rare     | 10%                     | $20|
@@ -86,7 +86,7 @@ Affected by: Metal Detector
 
 ### Mythic Chest
 
-| Rairty | Drop Chance | Reward |
+| Rarity | Drop Chance | Reward |
 | ----------------- | --- | ---|
 | Common   | 88%                     | $10|
 | Rare     | 10%                     | $20|
@@ -99,7 +99,7 @@ Affected by: X-Ray Goggles
 
 ### SPECIAL - Ascension Chest
 
-| Rairty | Drop Chance | Reward |
+| Rarity | Drop Chance | Reward |
 | ----------------- | --- | ---|
 | Common   | 54% | $10K     |
 | Rare     | 30% | $15K     |
@@ -115,6 +115,7 @@ If you have any feedback, please reach out to me at gantlem.contact@gmail.com
 Sneaky codes if you read this far ;) 
 - welcometochestfrenzy
 - gantlemdagoat 
+
 
 
 
