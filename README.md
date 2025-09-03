@@ -91,7 +91,7 @@ Affected by: Metal Detector
 | Common   | 88%                     | $10|
 | Rare     | 10%                     | $20|
 | Epic     | 1%                      | 1x Legendary key|
-| Godlike  | 0.00001% (1/10M)        | 1x Mythic key|
+| Godlike  | 0.00001% (1/10M)        | 1x Godlike key|
 | *SECRET* | 0.0001%  (1/1M)         | $1T| 
 
 Affected by: X-Ray Goggles
@@ -115,6 +115,7 @@ If you have any feedback, please reach out to me at gantlem.contact@gmail.com
 Sneaky codes if you read this far ;) 
 - welcometochestfrenzy
 - gantlemdagoat 
+
 
 
 
