@@ -76,8 +76,8 @@ Affected by: Fortune Cookie
 | Rarity | Drop Chance | Reward |
 | ----------------- | --- | ---|
 | Common   | 88%                     | $10|
-| Rare     | 10%                     | $20|
-| Epic     | 1%                      | 1x Legendary key|
+| Rare     | 10%                     | $50|
+| Epic     | 1%                      | $120|
 | Mythic   | 0.001%                  | 1x Mythic key|
 | VOID     | 0.00001% (1/10M)        | -1% of all money| 
 | *SECRET* | 0.0001%  (1/1M)         | $10M| 
@@ -88,9 +88,9 @@ Affected by: Metal Detector
 
 | Rarity | Drop Chance | Reward |
 | ----------------- | --- | ---|
-| Common   | 88%                     | $10|
-| Rare     | 10%                     | $20|
-| Epic     | 1%                      | 1x Legendary key|
+| Common   | 90%                     | $10K|
+| Rare     | 10%                     | $25K|
+| Epic     | 1%                      | $50K|
 | Godlike  | 0.00001% (1/10M)        | 1x Godlike key|
 | *SECRET* | 0.0001%  (1/1M)         | $1T| 
 
@@ -115,6 +115,7 @@ If you have any feedback, please reach out to me at gantlem.contact@gmail.com
 Sneaky codes if you read this far ;) 
 - welcometochestfrenzy
 - gantlemdagoat 
+
 
 
 

@@ -121,8 +121,8 @@ sg.theme(current_theme)
 # multiplier_price_legendary      = lambda: round(3.5**(2 * multipliers[0]))
 
 exchange_rate_legendary = 35
-exchange_rate_mythic = 50550
-exchange_rate_godlike = 750000000
+exchange_rate_mythic = 100_000
+exchange_rate_godlike = 25_000_000_000_000
 
 
 

@@ -137,8 +137,8 @@ def roll(chest, options, chances, amount, item_bonus, vow_of_sacrifice):
 
         # ["Common", "Rare", "Epic", "Mythic", "Void", "Secret"]
         roll_results[-1] += int(reward_count.get("Common",0)) * 10
-        roll_results[-1] += int(reward_count.get("Rare",0))* 15
-        roll_results[-1] += int(reward_count.get("Epic",0)) * 25
+        roll_results[-1] += int(reward_count.get("Rare",0))* 50
+        roll_results[-1] += int(reward_count.get("Epic",0)) * 120
         roll_results[-1] += int(reward_count.get("Secret",0)) * 1_000_000
         
         
@@ -161,9 +161,9 @@ def roll(chest, options, chances, amount, item_bonus, vow_of_sacrifice):
     if (chest == "MYTHIC"):
 
         # ["Common", "Rare", "Epic", "Godlike", "Secret"]
-        roll_results[-1] += int(reward_count.get("Common",0)) * 1000
-        roll_results[-1] += int(reward_count.get("Rare",0)) * 1500
-        roll_results[-1] += int(reward_count.get("Epic",0)) * 3000
+        roll_results[-1] += int(reward_count.get("Common",0)) * 10000
+        roll_results[-1] += int(reward_count.get("Rare",0)) * 25000
+        roll_results[-1] += int(reward_count.get("Epic",0)) * 50000
         roll_results[-1] += int(reward_count.get("Secret",0)) * 1_000_000_000_000
         
 

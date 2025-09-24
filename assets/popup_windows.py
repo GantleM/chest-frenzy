@@ -141,8 +141,8 @@ def chest_info(chest):
             Affected by: Metal Detector
             -------------------------------
             Common:\t\t\t88% = $10
-            Rare:\t\t\t10% = $20
-            Epic:\t\t\t 1% = 1x Legendary key
+            Rare:\t\t\t10% = $50
+            Epic:\t\t\t 1% = $120
             Mythic:\t\t\t0.001% = 1x Mythic key
             VOID:\t\t\t 0.00001% = -1% of all money (1/10M)
             \n\n\n\n
@@ -155,9 +155,9 @@ def chest_info(chest):
             Mythic Chest: (Stats shown with no multipliers) 
             Affected by: X-Ray Goggles
             -------------------------------
-            Common:\t\t\t90% = $1K
-            Rare:\t\t\t10% = $1.5K
-            Epic:\t\t\t 1% = $3K
+            Common:\t\t\t90% = $10K
+            Rare:\t\t\t10% = $25K
+            Epic:\t\t\t 1% = $50K
             Godlike:\t\t\t 0.00001% = 1x Godlike key (1/10M)
             \n\n\n\n
             *SECRET*:\t\t\t 0.0001% = $1T (1/1M)

@@ -1,6 +1,16 @@
 import pybase64
+import os
+import sys
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller exe"""
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 def getBase64(img):
+    img = resource_path(img)
     # Open the image file in binary mode
     with open(img, "rb") as img_file:
         # Read the file's binary content and encode it in base64
