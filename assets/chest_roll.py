@@ -21,7 +21,7 @@ def apply_multipliers(chest, roll_results, item_bonus, hasVow):
         if hasVow:
             roll_results[chest_key_reward_positions[chest]] = int(roll_results[0]*(item_bonus[1]+vow_of_sacrifice_boost))
         else:
-            roll_results[0] = int(roll_results[0]*item_bonus[1])
+            roll_results[chest_key_reward_positions[chest]] = int(roll_results[chest_key_reward_positions[chest]]*item_bonus[1])
 
     elif item_bonus[0] == "money":
             # print("Applied money bonus")
