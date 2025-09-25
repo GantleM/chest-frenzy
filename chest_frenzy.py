@@ -122,7 +122,7 @@ sg.theme(current_theme)
 
 exchange_rate_legendary = 35
 exchange_rate_mythic = 100_000
-exchange_rate_godlike = 25_000_000_000_000
+exchange_rate_godlike = 10_000_000_000_000
 
 
 
