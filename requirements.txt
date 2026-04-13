@@ -1,0 +1,5 @@
+FreeSimpleGUI
+numpy
+pybase64
+requests
+roman

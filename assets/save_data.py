@@ -47,6 +47,7 @@ def write_save(total_chest_opened_value,current_theme_value,owned_themes_value,m
 
     json_object = json.dumps(save_content, indent=4, cls=NumpyEncoder)
 
+    os.makedirs("saves", exist_ok=True)
     # Writing to sample.json
     with open("saves/save1.json", "w") as outfile:
         outfile.write(json_object)
