@@ -20,10 +20,10 @@ VERSION_URL      = "https://GantleM.pythonanywhere.com/version"
 
 # ZIP of the whole repo (GitHub "Download ZIP" URL, or your own server)
 # e.g. GitHub:  https://github.com/<user>/<repo>/archive/refs/heads/main.zip
-DOWNLOAD_URL     = "https://github.com/GantleM/ChestFrenzy/archive/refs/heads/main.zip"
+DOWNLOAD_URL     = "https://github.com/GantleM/chest-frenzy/archive/refs/heads/main.zip"
 
 # Top-level folder name inside the ZIP  (GitHub adds "<repo>-<branch>")
-ZIP_ROOT_FOLDER  = "ChestFrenzy-main"
+ZIP_ROOT_FOLDER  = "chest-frenzy-main"
 
 # Folders / files that must NEVER be touched during an update
 PROTECTED        = {"saves", "launcher.py"}
@@ -139,7 +139,7 @@ sg.theme("DarkBlue")
 layout = [
     [sg.VPush()],
     [sg.Push(),
-     sg.Text("⚔  CHEST FRENZY", font=("Arial Bold", 22), justification="center"),
+     sg.Text("CHEST FRENZY", font=("Arial Bold", 22), justification="center"),
      sg.Push()],
     [sg.Push(),
      sg.Text(f"v{CURRENT_VERSION}", font=("Arial", 10), key="-VERSION LABEL-",
