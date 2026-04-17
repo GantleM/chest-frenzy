@@ -656,6 +656,30 @@ prestige12_tab = [
     ]
 ]
 
+
+prestige15_tab = [
+    [
+        sg.Push(),
+        sg.Button("?", tooltip="Information", size=(1,1), pad=(0,3), button_color="white on blue" , key="-DEVIL INFO-"),
+        sg.Text("????", justification="center"),
+        
+        sg.Push()
+    ],
+    [   
+        sg.Image(data=imgD.devil_img, subsample=8,expand_x=True ,pad=(0, 0)),
+        
+    ],
+    [  
+        sg.Push(),
+        sg.Button("Agree", size=(9,1), pad=((0,3), 3), tooltip="Agree to the deal", key="-DEVIL DEAL-"),
+
+        sg.VSeparator(),
+        sg.Text("150x", size=(4,1), pad=((0, 0), 6), key="-DEVIL DEAL PRICE-"),
+        sg.Image(data=imgD.ascension_token_img, subsample=20, pad=(0, 0)),
+        sg.Push()
+    ]
+]
+
 # Dynamically make a list of tabs, updates
 def get_prestige_tabs(current_prestige):
 
@@ -670,7 +694,8 @@ def get_prestige_tabs(current_prestige):
         6: ["VI", prestige6_tab, current_prestige < 6],
         8: ["VIII", prestige8_tab, current_prestige< 8],
         10: ["X", prestige10_tab, current_prestige < 10],
-        12: ["XII", prestige12_tab, current_prestige < 12]
+        12: ["XII", prestige12_tab, current_prestige < 12],
+        15: ["XV", prestige15_tab, current_prestige < 15]
     }
     prestige_tabs = []
     counter = 0
@@ -785,13 +810,15 @@ def update_prestige():
     if (prestige < 10):
         key_requirement = 1*prestige
     elif (prestige < 25):
+        key_requirement = 5*prestige
+    elif (prestige < 50):
         key_requirement = 10*prestige
     elif (prestige < 100):
-        key_requirement = 50*prestige
+        key_requirement = 25*prestige
     elif (prestige < 1000):
-        key_requirement = 200*prestige
+        key_requirement = 100*prestige
     else:
-        key_requirement = 300*prestige
+        key_requirement = 200*prestige
 
     current_open_goal = (1_000_000_000_000/100) * prestige_difficulty
 
@@ -900,7 +927,7 @@ def update_prestige_tab(tab_name):
 
                 else:
                     daily_shop_items = result
-            
+        
             #After checking if list already is loaded, just update display
             if daily_shop_items:
                 update_button("-DAILY SHOP BUY-", True)
@@ -909,6 +936,10 @@ def update_prestige_tab(tab_name):
                 update_button("-DAILY SHOP BUY-", False)
                 window["-DAILY SHOP LB-"].update(["All items bought. Come back tomorrow!"])
 
+        case "XV":
+            if (upgrades["vow_of_sacrifice"]):
+                    window["-DEVIL DEAL-"].update("No way out")
+                    update_button("-DEVIL DEAL-", False)
 def update_roll_counter(change_by = 0):
     global currently_opening
     currently_opening += change_by
@@ -1177,6 +1208,9 @@ while True:
 
             case "-P TAB-12-":
                 update_prestige_tab("XII")
+
+            case "-P TAB-15-":
+                update_prestige_tab("XV")
 
     # -- COLLECTION BUTTONS
     if event == "-COLLECTION EQUIP-":
@@ -1495,6 +1529,23 @@ while True:
             update_inventory()
             update_collection()
 
+    # -- DEVIL / Vow of Sacrifice
+    
+    
+    if event == "-DEVIL DEAL-":
+        
+        price_str = window["-DEVIL DEAL PRICE-"].get()
+        price_of_deal = int(price_str[:-1])
+        
+        if (inventory[3] >= price_of_deal):
+            inventory[3] -= price_of_deal
+            # Enable vow
+            upgrades["vow_of_sacrifice"] = True
+
+            update_prestige_tab("XV")
+            update_inventory()
+            do_autosave()
+
     # -- CHEST BUTTONS
 
     if event == "-STARTER CHEST ROLL-":
@@ -1701,6 +1752,13 @@ while True:
     if event == "-ASCENSION CHEST INFO-":
         popups.chest_info("Ascension")
 
+    if event == "-ITEM CHEST INFO-":
+        popups.chest_info("Item")
+    
+
+    if event == "-DEVIL INFO-":
+        popups.chest_info("Devil")
+
 
     # -- REWARD BUTTONS
 
@@ -1721,7 +1779,8 @@ while True:
             ascension_token_gained = 10+upgrades["extra_AT"]
 
             total_chest_opened = 0
-            prestige +=1
+            currently_opening = 0 
+            prestige += 1
             current_prestige_currency = inventory[3]
             inventory = [0,0,0,current_prestige_currency+ascension_token_gained]
             multipliers = [1,1,1]

@@ -281,7 +281,7 @@ def item_chest_roll(float_chances, item_chances, rarity_chances, daily_shop):
         elif item_float_category == 0:
             floatNum = np.random.uniform(0, 0.4000001)
         
-        name = np.random.choice(["Fortune Cookie","Metal Detector", "X-Ray Goggles"],p=item_chances )
+        name = np.random.choice(["Fortune Cookie","Metal Detector", "X-Ray Goggles"], p=item_chances )
 
         rarity = np.random.choice(["Paper", "Iron", "Emerald", "Ruby" , "Golden", "Diamond"], p=rarity_chances)
 
