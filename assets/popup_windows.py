@@ -180,6 +180,57 @@ def chest_info(chest):
 
             sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
 
+        case "Item":
+            info = '''
+            Item Chest: (No boosters available)  
+
+            -------------------------------
+            Item type:
+            -------------------------------
+            Fortune Cookie - 30%
+            Metal Detector - 50%
+            X-Ray Goggles  - 20%
+
+            -------------------------------
+            Item multipliers:
+            -------------------------------
+            Tier 1 - 78%
+            ------
+            1- Paper (money) (2x multiplier)
+            2- Iron (keys)  (2x multiplier)
+
+            Tier 2 - 20%
+            ------
+            3- Emerald (money)(3x multiplier)
+            4- Ruby (keys)    (3x multiplier)
+
+            Tier 3 - 2%
+            ------
+            5- Gold (money)   (4x multiplier)
+            6- Diamond (keys) (4x multiplier)
+            '''
+
+            sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
+
+        case "Devil":
+            # ["Common", "Rare", "Very rare", "Epic", "JACKPOT"]
+            # [54, 30, 10, 5, 1]
+            info = '''
+            ????: (Stats shown with no multipliers) 
+            -------------------------------
+            You're given a deal by ???? the contract is the following:
+            - Greed caused you to no longer be able to earn money 
+                -> (No money gains from starter chests)
+            - You must pay the price with your soul 
+                -> (150x AT)
+
+            However you gain:
+            - 10x permanent key amount boost
+
+            '''
+
+            sg.popup_scrolled(info, title="Information", font=("Arial Bold", 11), size=(60,10))
+
 def redeem_codes():
     code = sg.popup_get_text('Enter code to redeem')
 
