@@ -1573,7 +1573,7 @@ while True:
                 # collection_data.append(item_to_buy)
 
             do_autosave()
-            update_prestige_tab("XII")
+            update_prestige_tab("XV")
             update_inventory()
             update_collection()
 
@@ -1590,7 +1590,7 @@ while True:
             # Enable vow
             upgrades["vow_of_sacrifice"] = True
 
-            update_prestige_tab("XV")
+            update_prestige_tab("XX")
             update_inventory()
             do_autosave()
 

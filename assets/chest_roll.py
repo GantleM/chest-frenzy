@@ -19,7 +19,7 @@ def apply_multipliers(chest, roll_results, item_bonus, hasVow):
     if item_bonus[0] == "key":
         # print("Applied key bonus")
         if hasVow:
-            roll_results[chest_key_reward_positions[chest]] = int(roll_results[0]*(item_bonus[1]+vow_of_sacrifice_boost))
+            roll_results[chest_key_reward_positions[chest]] = int(roll_results[chest_key_reward_positions[chest]]*(item_bonus[1]+vow_of_sacrifice_boost))
         else:
             roll_results[0] = int(roll_results[0]*item_bonus[1])
 
@@ -29,12 +29,12 @@ def apply_multipliers(chest, roll_results, item_bonus, hasVow):
 
             # Get vow bonus on keys regardless of item
             if hasVow:
-                roll_results[chest_key_reward_positions[chest]] = int(roll_results[0]*(item_bonus[1]+vow_of_sacrifice_boost))
+                roll_results[chest_key_reward_positions[chest]] = int(roll_results[chest_key_reward_positions[chest]]*(item_bonus[1]+vow_of_sacrifice_boost))
 
     else:
         if hasVow:
             print("No booster, but has vow")
-            roll_results[chest_key_reward_positions[chest]] = int(roll_results[0]*vow_of_sacrifice_boost)
+            roll_results[chest_key_reward_positions[chest]] = int(roll_results[chest_key_reward_positions[chest]]*vow_of_sacrifice_boost)
     
 
     return roll_results
