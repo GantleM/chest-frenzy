@@ -20,6 +20,25 @@ This is a "cookie clicker" type game, but with chests!
 
     The parallel open ugprade allows multiple batches of chests to be opened simultaneously. 
 
+
+
+## Installation
+
+Run the following to install all dependencies:
+```bash
+  pip install -r requirements.txt
+```
+Then open the **FOLDER** where the game is located. The paths fully fixed yet, so all paths are local. The game won't start unless you have the whole folder open when opening the game.
+
+Open the game by launching 
+```bash
+   launcher.py
+```
+    
+
+
+
+
 ## 🔗 Links
 [![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://gantlem.rf.gd/)  
 
@@ -115,7 +134,6 @@ If you have any feedback, please reach out to me at gantlem.contact@gmail.com
 Sneaky codes if you read this far ;) 
 - welcometochestfrenzy
 - gantlemdagoat 
-
 
 
 
