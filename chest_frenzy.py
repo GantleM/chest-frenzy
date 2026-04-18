@@ -813,6 +813,8 @@ def update_prestige():
         prestige_difficulty = 100 + (5*prestige)
     elif (prestige < 50):
         prestige_difficulty = 100 + (15*prestige)
+    elif (prestige < 100):
+        prestige_difficulty = 100 + (100*prestige)
     elif (prestige < 1000):
         prestige_difficulty = 100 + (200*prestige)
     else:
@@ -824,13 +826,17 @@ def update_prestige():
     elif (prestige < 25):
         key_requirement = 5*prestige
     elif (prestige < 50):
-        key_requirement = 10*prestige
-    elif (prestige < 100):
         key_requirement = 25*prestige
+    elif (prestige < 100):
+        key_requirement = 150*prestige
+    elif (prestige < 150):
+        key_requirement = 550*prestige
+    elif (prestige < 250):
+        key_requirement = 1000*prestige
     elif (prestige < 1000):
-        key_requirement = 100*prestige
+        key_requirement = 5000*prestige
     else:
-        key_requirement = 200*prestige
+        key_requirement = 10000*prestige
 
     current_open_goal = (1_000_000_000_000/100) * prestige_difficulty
 
