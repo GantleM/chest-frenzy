@@ -61,7 +61,7 @@ def get_collection_list(raw_collection):
 
 if(os.path.isfile("saves/save1.json")):
     saved_data = save_game.read_save()
-
+  
     total_chest_opened = saved_data["total_chest_opened"]
     current_theme = saved_data["theme"]
     owned_themes = saved_data["owned_themes"]
@@ -102,6 +102,7 @@ else:
         "extra_AT": 0,
         "starter_money_increase": 0,
         "collection_space_increase": 0,
+        "exchange_rate_increase": 1,
         "vow_of_sacrifice" : False
     }
     used_codes = []
@@ -120,10 +121,13 @@ sg.theme(current_theme)
 # * Prices setup
 # multiplier_price_legendary      = lambda: round(3.5**(2 * multipliers[0]))
 
-exchange_rate_legendary = 35
-exchange_rate_mythic = 50550
-exchange_rate_godlike = 750000000
+def exchange_rate(starting):
+    global upgrades
+    return starting*upgrades["exchange_rate_increase"]
 
+exchange_rate_legendary = 0
+exchange_rate_mythic = 0
+exchange_rate_godlike = 0
 
 
 def multiplier_price(rarity):
@@ -495,17 +499,17 @@ prestige2_tab = [
         sg.Text("Exchange key / money")
     ],
     [  
-        sg.Image(data=imgD.legendary_key_img, subsample=20), sg.Text(f"--> {nf.sizeof_number(exchange_rate_legendary,"$")}", size=(12,1)),
+        sg.Image(data=imgD.legendary_key_img, subsample=20), sg.Text(f"--> {nf.sizeof_number(exchange_rate_legendary,"$")}", size=(12,1), key = "-EXCHANGE LEGENDARY RATE-"),
         sg.Spin([i for i in range(10001)], size=(10, 1), key="-EXCHANGE LEGENDARY AMOUNT-"), 
         sg.Button("Exchange", key="-EXCHANGE LEGENDARY-")
     ],
     [  
-        sg.Image(data=imgD.mythic_key_img, subsample=20), sg.Text(f"--> {nf.sizeof_number(exchange_rate_mythic,"$")}", size=(12,1)),
+        sg.Image(data=imgD.mythic_key_img, subsample=20), sg.Text(f"--> {nf.sizeof_number(exchange_rate_mythic,"$")}", size=(12,1),  key = "-EXCHANGE MYTHIC RATE-"),
         sg.Spin([i for i in range(10001)], size=(10, 1), key="-EXCHANGE MYTHIC AMOUNT-"), 
         sg.Button("Exchange", key="-EXCHANGE MYTHIC-")
     ],
     [  
-        sg.Image(data=imgD.godlike_key_img, subsample=20), sg.Text(f"--> {nf.sizeof_number(exchange_rate_godlike,"$")}", size=(12,1)),
+        sg.Image(data=imgD.godlike_key_img, subsample=20), sg.Text(f"--> {nf.sizeof_number(exchange_rate_godlike,"$")}", size=(12,1),  key = "-EXCHANGE GODLIKE RATE-"),
         sg.Spin([i for i in range(10001)], size=(10, 1), key="-EXCHANGE GODLIKE AMOUNT-"), 
         sg.Button("Exchange", key="-EXCHANGE GODLIKE-")
     ]
@@ -623,6 +627,14 @@ prestige10_tab = [
         sg.Image(data=imgD.ascension_token_img, subsample=20, pad=(0, 0))
     ],
     [
+        sg.Text("Key exchange rate:", size=(17, 1)), 
+        sg.Text(f"+{upgrades["exchange_rate_increase"]-1}x", size=(7, 1), justification="right", key="-EXCHANGE RATE INCREASE VALUE-"), 
+        sg.Button("+", tooltip="+1x", key="-EXCHANGE RATE INCREASE INC-"),
+
+        sg.Text("10x", size=(4,1), pad=((15, 0), 6), key="-EXCHANGE RATE INCREASE PRICE-"),
+        sg.Image(data=imgD.ascension_token_img, subsample=20, pad=(0, 0))
+    ],
+    [
         sg.Text("Starter money increase:", size=(17, 1)), 
         sg.Text(f"+{nf.sizeof_number(upgrades["starter_money_increase"], "$")}", size=(7, 1), justification="right", key="-STARTER MONEY INCREASE VALUE-"), 
         sg.Button("+", tooltip="+1K", key="-STARTER MONEY INCREASE INC-"),
@@ -640,7 +652,7 @@ prestige10_tab = [
     ]
 ]
 
-prestige12_tab = [
+prestige15_tab = [
     [
         sg.Text(f"Daily shop:")
     ],
@@ -657,7 +669,7 @@ prestige12_tab = [
 ]
 
 
-prestige15_tab = [
+prestige20_tab = [
     [
         sg.Push(),
         sg.Button("?", tooltip="Information", size=(1,1), pad=(0,3), button_color="white on blue" , key="-DEVIL INFO-"),
@@ -674,7 +686,7 @@ prestige15_tab = [
         sg.Button("Agree", size=(9,1), pad=((0,3), 3), tooltip="Agree to the deal", key="-DEVIL DEAL-"),
 
         sg.VSeparator(),
-        sg.Text("150x", size=(4,1), pad=((0, 0), 6), key="-DEVIL DEAL PRICE-"),
+        sg.Text("500x", size=(4,1), pad=((0, 0), 6), key="-DEVIL DEAL PRICE-"),
         sg.Image(data=imgD.ascension_token_img, subsample=20, pad=(0, 0)),
         sg.Push()
     ]
@@ -694,8 +706,8 @@ def get_prestige_tabs(current_prestige):
         6: ["VI", prestige6_tab, current_prestige < 6],
         8: ["VIII", prestige8_tab, current_prestige< 8],
         10: ["X", prestige10_tab, current_prestige < 10],
-        12: ["XII", prestige12_tab, current_prestige < 12],
-        15: ["XV", prestige15_tab, current_prestige < 15]
+        15: ["XV", prestige15_tab, current_prestige < 15],
+        20: ["XX", prestige20_tab, current_prestige < 20]
     }
     prestige_tabs = []
     counter = 0
@@ -833,9 +845,16 @@ def update_prestige():
     update_button("-PRESTIGE-", met_Requirement)
     
 
+
+
+
+
 def update_prestige_tab(tab_name):
 
     global daily_shop_items
+    global exchange_rate_legendary
+    global exchange_rate_mythic
+    global exchange_rate_godlike
 
     match tab_name:
         case "I":
@@ -851,7 +870,16 @@ def update_prestige_tab(tab_name):
 
             window["-UPGRADE DISCOUNT VALUE-"].update(f"{upgrades["upgrade_discount"]}%")
             update_button("-UPGRADE DISCOUNT INC-", upgrades["upgrade_discount"] < 50)
-        
+        case "II":
+            exchange_rate_legendary = exchange_rate(35)
+            exchange_rate_mythic = exchange_rate(50550)
+            exchange_rate_godlike = exchange_rate(750000000)
+
+            window["-EXCHANGE LEGENDARY RATE-"].update(f"--> {nf.sizeof_number(exchange_rate_legendary,"$")}")
+            window["-EXCHANGE MYTHIC RATE-"].update(f"--> {nf.sizeof_number(exchange_rate_mythic,"$")}")
+            window["-EXCHANGE GODLIKE RATE-"].update(f"--> {nf.sizeof_number(exchange_rate_godlike,"$")}")
+
+
         case "III":
             if ("DarkBlue9" in owned_themes):
                 window["-THEME DARKBLUE9-"].update("Equip")
@@ -894,11 +922,14 @@ def update_prestige_tab(tab_name):
             window["-STARTER MONEY INCREASE VALUE-"].update(f"+{nf.sizeof_number(upgrades["starter_money_increase"],"$")}")
             update_button("-STARTER MONEY INCREASE INC-", upgrades["starter_money_increase"] < 10000)
 
+            window["-EXCHANGE RATE INCREASE VALUE-"].update(f"+{upgrades["exchange_rate_increase"]-1}x")
+            update_button("-EXCHANGE RATE INCREASE INC-", upgrades["exchange_rate_increase"]-1 < 30)
+
             window["-COLLECTION SPACE INCREASE VALUE-"].update(f"+{upgrades["collection_space_increase"]}")
             update_button("-COLLECTION SPACE INCREASE INC-", upgrades["collection_space_increase"] < 70)
 
 
-        case "XII":
+        case "XV":
 
             # If not yet loaded, then load the items
             if daily_shop_items and daily_shop_items[0] == "Loading":
@@ -936,7 +967,7 @@ def update_prestige_tab(tab_name):
                 update_button("-DAILY SHOP BUY-", False)
                 window["-DAILY SHOP LB-"].update(["All items bought. Come back tomorrow!"])
 
-        case "XV":
+        case "XX":
             if (upgrades["vow_of_sacrifice"]):
                     window["-DEVIL DEAL-"].update("No way out")
                     update_button("-DEVIL DEAL-", False)
@@ -1194,6 +1225,9 @@ while True:
             case "-P TAB-1-":
                 update_prestige_tab("I")
 
+            case "-P TAB-2-":
+                update_prestige_tab("II")
+
             case "-P TAB-3-":
                 update_prestige_tab("III")
 
@@ -1206,11 +1240,11 @@ while True:
             case "-P TAB-10-":
                 update_prestige_tab("X")
 
-            case "-P TAB-12-":
-                update_prestige_tab("XII")
-
             case "-P TAB-15-":
                 update_prestige_tab("XV")
+
+            case "-P TAB-20-":
+                update_prestige_tab("XX")
 
     # -- COLLECTION BUTTONS
     if event == "-COLLECTION EQUIP-":
@@ -1371,6 +1405,20 @@ while True:
             update_upgrades()
             update_inventory()
             do_autosave()
+
+
+    if event == "-EXCHANGE RATE INCREASE INC-":
+        price_str = window["-EXCHANGE RATE INCREASE PRICE-"].get()
+        price_of_upgrade = int(price_str[:-1])
+
+        if inventory[3] >= price_of_upgrade:
+            inventory[3] -= price_of_upgrade
+            upgrades["exchange_rate_increase"] += 1
+            
+            update_prestige_tab("X")
+            update_inventory()
+            do_autosave()
+
     
     if event == "-STARTER MONEY INCREASE INC-":
         price_str = window["-STARTER MONEY INCREASE PRICE-"].get()

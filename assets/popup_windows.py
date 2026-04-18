@@ -46,6 +46,9 @@ def prestige_help():
     After certain prestige limits, requirements increase drastically:
         - Prestige 10
         - Prestige 25
+        - Prestige 50
+        - Prestige 100
+        - Prestige 1000
 
     Certain prestiges unlock "Prestige tabs" which can be seen on the right side.
     Not every prestige unlocks a tab. 
@@ -57,6 +60,7 @@ def prestige_help():
         - VI
         - VIII
         - X
+        - XV
         - XX
     
     Prestige upgrades bought using Ascension Tokens are permanent and save even after a prestige.
@@ -222,7 +226,7 @@ def chest_info(chest):
             - Greed caused you to no longer be able to earn money 
                 -> (No money gains from starter chests)
             - You must pay the price with your soul 
-                -> (150x AT)
+                -> (500x AT)
 
             However you gain:
             - 10x permanent key amount boost
