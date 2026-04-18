@@ -37,7 +37,7 @@ This is a "cookie clicker" type game, but with chests!
 
 ---
 ### 🎮 In-game content
-**Prestige 20 tab**  ![status](https://img.shields.io/badge/Prestige%2020-Planning-lightgrey)  
+**Prestige 30 tab**  ![status](https://img.shields.io/badge/Prestige%2030-Planning-lightgrey)  
     → 🔄 Able to trade items with players  
     → 💰 Trade currencies (eg AT + *new currency?*)
 
